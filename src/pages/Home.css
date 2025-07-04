@@ -1,0 +1,41 @@
+.home-container {
+    margin: 0 auto;
+    padding: 70px 0;
+    text-align: center;
+}
+
+h2 {
+    color: rgb(51, 48, 48)
+}
+
+.details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.ride {
+    /* border: 2px solid black; */
+    border: 1px solid #ddd;
+    background: #999999;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    height: auto;
+    width: auto;
+    /* padding: 10px; */
+}
+
+p {
+    color: black;
+    font-size: large;
+    font-weight: 600;
+}
+
+.link {
+    color: black;
+    text-decoration: none;
+    /* font-size: large; */
+    font-weight: 500;
+}
