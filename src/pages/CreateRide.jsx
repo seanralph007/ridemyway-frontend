@@ -26,8 +26,8 @@ export default function CreateRide() {
       <h2>Create Ride</h2>
       <select className="carType" name="car_type" value={ride.car_type} onChange={handleChange}>
         <option value="">Select Car type</option>
-        <option value="Car">Car</option>
-        <option value="Bus">Bus</option>
+        <option value="car">Car</option>
+        <option value="bus">Bus</option>
       </select>
       {/* <select name="car_type" value={ride.car_type} onChange={handleChange} className="carType">
         <option value="bus">Bus</option>
