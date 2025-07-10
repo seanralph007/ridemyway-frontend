@@ -47,7 +47,7 @@ export default function RideDetails() {
         })}
       </p>
       <p><strong>Available Seats:</strong> {ride.available_seats}</p>
-      <img src={ride.car_type === "Bus" ? "/images/busPicx.png" : "/images/carPicx.png"} alt={ride.car_type} width={100} /><br />
+      <img src={ride.car_type === "bus" ? "/images/busPicx.png" : "/images/carPicx.png"} alt={ride.car_type} width={100} /><br />
       {user ? (
           <>
             {user.id === ride.driver_id && (<p>You are the driver of this vehicle</p>)}
@@ -55,7 +55,8 @@ export default function RideDetails() {
           </>
         ) : (
           <>
-            <button><Link to="/login" >Login</Link></button>
+            <p>Login to request for this ride</p>
+            {/* <button style={{ textDecoration: "none", color: "red" }}><Link to="/login" >Login</Link></button> */}
           </>
         )}
     </div>

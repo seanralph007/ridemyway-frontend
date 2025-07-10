@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <form className='container' onSubmit={handleSubmit}>
+    <form className='login-container' onSubmit={handleSubmit}>
       <h2>Login</h2>
       <input
         className="input"

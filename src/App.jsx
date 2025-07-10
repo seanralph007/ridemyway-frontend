@@ -1,8 +1,6 @@
-// App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContext } from "react";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
-// import Navbar from "./components/Navbar";
 import Navbar from "./components/nav";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./auth/Login";

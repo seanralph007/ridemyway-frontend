@@ -1,6 +1,6 @@
 .home-container {
     margin: 0 auto;
-    padding: 70px 0;
+    padding: 50px 0;
     text-align: center;
 }
 
@@ -10,15 +10,18 @@ h2 {
 
 .details-container {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
+    /* flex-direction: column; */
+    gap: 20px;
+    /* align-items: center; */
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
 .ride {
     /* border: 2px solid black; */
-    border: 1px solid #ddd;
-    background: #999999;
+    border: 1px solid #c9c9c9;
+    background: #7e7e7e;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 8px;
@@ -38,4 +41,19 @@ p {
     text-decoration: none;
     /* font-size: large; */
     font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .details-container {
+        /* display: flex; */
+        flex-direction: column;
+        /* gap: 10px; */
+        align-items: center;
+        /* margin-top: 2rem; */
+        /* flex-wrap: wrap; */
+    }
+    .home-container {
+        margin: 1rem auto;
+        padding: 20px 0;
+    }
 }

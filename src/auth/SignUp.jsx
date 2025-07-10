@@ -60,7 +60,7 @@ export default function Signup() {
 //  ]
 
   return (
-    <form className="container" onSubmit={handleSubmit}>
+    <form className="signup-container" onSubmit={handleSubmit}>
       <h2>Signup</h2>
       <select
         className="role"
