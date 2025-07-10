@@ -63,6 +63,7 @@ const DriverDashboard = () => {
           rides.map((ride) => (
             <div
               key={ride.id}
+              className="req-box"
               style={{
                 border: "1px solid #ddd",
                 borderRadius: "8px",
@@ -80,7 +81,7 @@ const DriverDashboard = () => {
                 </button>
               </h3>
               <p>
-                <strong>Departure:</strong>{new Date(ride.departure_time).toLocaleString(undefined, {
+                <strong>Departure:</strong> {new Date(ride.departure_time).toLocaleString(undefined, {
                   year: "numeric",
                   month: "numeric",
                   day: "numeric",

@@ -33,7 +33,7 @@ export default function Home() {
                 })} <br />
             </p>
             <p>{ride.car_type}</p>
-            <img src={ride.car_type === "Bus" ? "/images/busPicx.png" : "/images/carPicx.png"} alt={ride.car_type} width={100} /><br />
+            <img src={ride.car_type === "bus" ? "/images/busPicx.png" : "/images/carPicx.png"} alt={ride.car_type} width={100} /><br />
             <Link to={`/rides/${ride.id}`} className="link">More Ride Details -- </Link>
           </div>
         ))}        

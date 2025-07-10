@@ -12,7 +12,7 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    role: "passenger"
+    role: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -68,6 +68,7 @@ export default function Signup() {
         value={form.role}
         onChange={handleChange}
       >
+        <option value="">Select Role</option>
         <option value="passenger">Passenger</option>
         <option value="driver">Driver</option>
       </select>
