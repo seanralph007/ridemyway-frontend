@@ -1,18 +1,21 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   background-color: rgb(51, 48, 48);
-  margin: -16px -16px;
-  height: 40px;
-  width: 97%;
-  padding: 16px 32px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  box-sizing: border-box; /* Respects padding */
 }
+
 
 .navbar-brand {
   display: flex;
-  gap: 16rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
 }
   
 .navbar-logo {
@@ -64,8 +67,8 @@
 }
 
 .logout-btn {
-  width: 10px;
-  margin-right: 2rem;
+  width: 8px;
+  margin-right: 2.7rem;
 }
   
 /* Sidebar (for mobile) */
@@ -75,11 +78,7 @@
   
 /* Mobile view */
 @media (max-width: 768px) {
-  .navbar-brand {
-    margin-bottom: -15px;
-  }
-
-  .navbar-logo {
+ .navbar-logo {
     font-size: 1.2rem;
   }
 
@@ -137,4 +136,3 @@
     margin-bottom: 1rem;
   }
 }
-  

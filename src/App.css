@@ -1,7 +1,16 @@
-body {
+/* body {
   background: linear-gradient(90deg, #a6a6a6, #888787);
   height: "100vh";
+} */
+
+html, body {
+  background: linear-gradient(90deg, #a6a6a6, #888787);
+  height: "100vh";
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
 }
+
 
 @media (max-width: 768px) {
     body {
