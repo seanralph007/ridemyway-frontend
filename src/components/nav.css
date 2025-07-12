@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   background-color: rgb(51, 48, 48);
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   width: 100%;
   box-sizing: border-box; /* Respects padding */
@@ -50,6 +50,7 @@
   text-decoration: none;
   font-size: 1rem;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .navbar-links button  {
