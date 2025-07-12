@@ -7,13 +7,21 @@
 
 .req-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    /* flex-direction: column; */
+    justify-content: center;
     gap: 10px;
-    align-items: center;
+    /* align-items: center; */
+    margin: 1rem 0;
+}
+
+.req-subtitle {
+    color: rgb(39, 39, 39);
+    padding-top: 1rem;
 }
 
 .request {
-    height: 130px;
+    height: auto;
     width: auto;
 }
 
@@ -21,4 +29,42 @@
 
 .req-box {
     background: #999999;
+}
+
+.req-details {
+    background-color: #cccccc;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.swal-icon .swal2-success-ring {
+    border: 3px solid #0cb333 !important; 
+}
+  
+/* tick inside the circle */
+.swal-icon .swal2-success-line-tip,
+.swal-icon .swal2-success-line-long {
+    background-color: #28a745 !important; 
+}
+
+@media (max-width: 768px) {
+    .button-container {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .swal-popup {
+        width: 20rem;
+        height: auto;
+    }
 }

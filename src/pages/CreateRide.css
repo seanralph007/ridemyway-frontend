@@ -42,3 +42,34 @@ button {
     width: 250px;
     font-size: 18px;
 }
+
+.my-swal-popup {
+    width: 25rem;
+}
+
+.my-swal-title {
+    color: #000000;
+}
+
+.my-swal-icon {
+    width: 80px !important;   
+    height: 80px !important;
+}
+
+.my-swal-icon .swal2-success-ring {
+    border: 3px solid #0cb333 !important; 
+}
+  
+  /* tick inside the circle */
+  .my-swal-icon .swal2-success-line-tip,
+  .my-swal-icon .swal2-success-line-long {
+    background-color: #28a745 !important; 
+}
+    
+
+@media (max-width: 768px) {
+    .my-swal-popup {
+        width: auto;
+        height: 21rem;
+    }
+}

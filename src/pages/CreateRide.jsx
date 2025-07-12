@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from 'sweetalert2';
 import api from "../api/api";
 import { useNavigate } from "react-router-dom";
 import './CreateRide.css';
@@ -13,6 +14,21 @@ export default function CreateRide() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await api.post("/rides", ride);
+    Swal.fire({
+      title: 'Success!',
+      text: 'Ride created successfully.',
+      icon: 'success',
+      customClass: {
+        popup: 'my-swal-popup',
+        title: 'my-swal-title',
+        content: 'my-swal-content',
+        icon: 'my-swal-icon',
+      },
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#505050',
+      background: '#cccccc',
+      color: '#252525'
+    })
     navigate("/");
   };
 

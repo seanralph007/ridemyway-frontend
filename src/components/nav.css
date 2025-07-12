@@ -78,6 +78,11 @@
   .navbar-brand {
     margin-bottom: -15px;
   }
+
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+
   .navbar-toggle {
     display: block;
   }

@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import './RideDetails.css';
+import Swal from "sweetalert2";
 
 export default function RideDetails() {
   const { id } = useParams();
@@ -17,7 +18,6 @@ export default function RideDetails() {
         if (!res.data) {
           // handle not found
           console.log("Ride not found");
-          // maybe navigate to a 404 page or show a message
         } else {
           setRide(res.data);
         }
@@ -30,7 +30,18 @@ export default function RideDetails() {
 
   const requestJoin = async () => {
     await api.post(`/rides/${id}/request`);
-    alert("Request sent");
+      Swal.fire({
+      title: 'Request sent!',
+      customClass: {
+        popup: 'swal-popup',
+        title: 'swal-title',
+      },
+      confirmButtonText: 'Ok',
+      confirmButtonColor: '#292727',
+      background: '#cccccc',
+      color: '#252525'
+  })
+    // alert("Request sent");
   };
 
   return ride ? (

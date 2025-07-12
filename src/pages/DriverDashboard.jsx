@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
 import api from "../api/api";
 import './Dashboard.css';
 
@@ -39,18 +40,66 @@ const DriverDashboard = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   // Delete ride
+  // const deleteRide = async (rideId) => {
+  //   if (!window.confirm("Are you sure you want to delete this ride?")) return;
+  
+  //   try {
+  //     await api.delete(`/rides/${rideId}`);
+  //     alert("Ride deleted.");
+  //     fetchOffers(); // Refresh the list
+  //   } catch (err) {
+  //     console.error("Failed to delete ride:", err);
+  //     alert("Failed to delete the ride.");
+  //   }
+  // };
+
   const deleteRide = async (rideId) => {
-    if (!window.confirm("Are you sure you want to delete this ride?")) return;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This ride will be permanently deleted.",
+      icon: 'warning',
+      customClass: {
+        popup: 'swal-popup',
+        icon: 'swal-icon',
+      },
+      color: '#252525',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#292727',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+  
+    if (!result.isConfirmed) return;
   
     try {
       await api.delete(`/rides/${rideId}`);
-      alert("Ride deleted.");
-      fetchOffers(); // Refresh the list
+      Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: 'Your ride was successfully deleted.',
+        timer: 2000,
+        showConfirmButton: false,
+        color: '#252525',
+        customClass: {
+          popup: 'swal-popup',
+          icon: 'swal-icon',
+        }
+      });
+      fetchOffers(); // Refresh rides
     } catch (err) {
-      console.error("❌ Failed to delete ride:", err);
-      alert("Failed to delete the ride.");
+      console.error("Failed to delete ride:", err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: 'Something went wrong while deleting.',
+        color: '#252525',
+        customClass: {
+          popup: 'swal-popup',
+        }
+      });
     }
-  };
+  };  
   
 
   return (
@@ -99,10 +148,9 @@ const DriverDashboard = () => {
                 <p>No requests for this ride yet.</p>
               ) : (
                 ride.requests.map((req) => (
-                  <div
+                  <div className="req-details"
                     key={req.id}
                     style={{
-                      backgroundColor: "#f9f9f9",
                       padding: "0.75rem",
                       borderRadius: "6px",
                       marginBottom: "0.75rem",
@@ -114,10 +162,9 @@ const DriverDashboard = () => {
                     </p>
 
                     {req.status === "pending" && (
-                      <div>
+                      <div className="button-container">
                         <button
                           onClick={() => handleRequestAction(req.id, "accepted")}
-                          style={{ marginRight: "0.5rem" }}
                         >
                           Accept
                         </button>

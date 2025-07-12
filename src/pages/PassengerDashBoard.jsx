@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
 import api from "../api/api";
 import './Dashboard.css';
+import React from "react";
 
 export default function PassengerDashboard() {
   const [myRequests, setMyRequests] = useState([]);
@@ -23,19 +25,65 @@ export default function PassengerDashboard() {
     fetchRequests();
   }, []);
 
+  // const deleteRequest = async (requestId) => {
+  //   const confirm = window.confirm("Are you sure you want to cancel this request?");
+  //   if (!confirm) return;
+  
+  //   try {
+  //     await api.delete(`/ride-requests/${requestId}`);
+  //     alert("Request cancelled.");
+  //     setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
+  //   } catch (err) {
+  //     console.error("Failed to delete request:", err.message);
+  //     alert("Could not delete request.");
+  //   }
+  // };
+
   const deleteRequest = async (requestId) => {
-    const confirm = window.confirm("Are you sure you want to cancel this request?");
-    if (!confirm) return;
+    const result = await Swal.fire({
+      title: 'Cancel Ride Request?',
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      customClass: {
+        popup: 'swal-popup',
+        icon: 'swal-icon',
+      },
+      color: '#252525',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#292727',
+      confirmButtonText: 'Yes, cancel it!',
+      cancelButtonText: 'No'
+    });
+  
+    if (!result.isConfirmed) return;
   
     try {
       await api.delete(`/ride-requests/${requestId}`);
-      alert("Request cancelled.");
+      Swal.fire({
+        title: 'Cancelled!',
+        text: 'Your ride request was successfully removed.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+        color: '#252525',
+        customClass: {
+          popup: 'swal-popup',
+          icon: 'swal-icon',
+        }
+      });
+  
       setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
     } catch (err) {
       console.error("Failed to delete request:", err.message);
-      alert("Could not delete request.");
+      Swal.fire({
+        title: 'Error',
+        text: 'Could not cancel the request. Please try again.',
+        icon: 'error'
+      });
     }
   };
+  
 
   if (loading) return <p>Loading your ride requests...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -43,6 +91,7 @@ export default function PassengerDashboard() {
   return (
     <div className="dashboard-container">
       <h2>Passenger Dashboard</h2>
+      <p className="req-subtitle">Your ride requests:</p>
       <div className="req-container">
         {myRequests.length === 0 ? (
           <p>You have not requested any rides yet.</p>
@@ -56,7 +105,7 @@ export default function PassengerDashboard() {
                 borderRadius: "8px",
                 padding: "1rem",
                 marginBottom: "1rem",
-                background: "#f9f9f9"
+                background: "#cccccc"
               }}
             >
               <p>
