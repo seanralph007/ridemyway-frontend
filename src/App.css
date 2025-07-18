@@ -13,8 +13,11 @@ html, body {
 
 
 @media (max-width: 768px) {
+  html, body {
+    background: #ececec;
+  }
     body {
-      background: #ececec;
+      /* background: #ececec; */
       overflow-x: hidden;
       width: 100%;
     }
