@@ -1,0 +1,9 @@
+.footer-container {
+    text-align: center;
+    /* color: rgba(43, 42, 42, 0.726); */
+}
+
+.footer-text {
+    color: rgb(124, 122, 122);
+    font-size: small;
+}

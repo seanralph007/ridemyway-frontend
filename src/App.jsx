@@ -11,12 +11,13 @@ import RideDetails from "./pages/RideDetails";
 import DriverDashboard from "./pages/DriverDashboard";
 import PassengerDashboard from "./pages/PassengerDashBoard";
 import VerifyEmail from "./pages/VerifyEmail";
+import Footer from "./components/Footer/Footer";
 import './App.css';
 
 function AppRoutes() {
   const { loading } = useContext(AuthContext);
 
-  if (loading) return <p>Loading session...</p>; // Avoid premature rendering
+  if (loading) return <p>Loading session...</p>; // Avoids premature rendering
 
   return (
     <>
@@ -32,6 +33,7 @@ function AppRoutes() {
         <Route path="/driver" element={<ProtectedRoute><DriverDashboard /></ProtectedRoute>} />
         <Route path="/passenger" element={<ProtectedRoute><PassengerDashboard /></ProtectedRoute>} />
       </Routes>
+      <Footer />
     </>
   );
 }
