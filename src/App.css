@@ -14,8 +14,8 @@ html, body {
 
 @media (max-width: 768px) {
     body {
-      background: linear-gradient(90deg, #a6a6a6, #ffffff);
-    overflow-x: hidden;
-    width: 100%;
-  }
+      background: #ececec;
+      overflow-x: hidden;
+      width: 100%;
+    }
 }

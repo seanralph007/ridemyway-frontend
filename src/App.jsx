@@ -33,7 +33,6 @@ function AppRoutes() {
         <Route path="/driver" element={<ProtectedRoute><DriverDashboard /></ProtectedRoute>} />
         <Route path="/passenger" element={<ProtectedRoute><PassengerDashboard /></ProtectedRoute>} />
       </Routes>
-      <Footer />
     </>
   );
 }
