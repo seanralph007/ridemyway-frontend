@@ -38,7 +38,7 @@ export default function CreateRide() {
   // ]
 
   return (
-    <form className="container" onSubmit={handleSubmit}>
+    <form className="create-ride-container" onSubmit={handleSubmit}>
       <h2>Create Ride</h2>
       <select className="carType" name="car_type" value={ride.car_type} onChange={handleChange}>
         <option value="">Select Car type</option>
