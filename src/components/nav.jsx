@@ -17,7 +17,7 @@ export default function Navbar() {
         <button className="navbar-toggle" onClick={toggleMenu}>☰</button>
       </div>
 
-      {/* Top Nav Links (shown only on large screens) */}
+      {/* Top Nav Links (show only on large screens) */}
       <div className="navbar-links">
         <Link to="/">Home</Link>
 

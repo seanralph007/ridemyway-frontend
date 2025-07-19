@@ -11,7 +11,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // Spinner state
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Validate the form
   const validateForm = () => {
@@ -30,18 +30,18 @@ export default function Login() {
       return;
     }
 
-    setLoading(true); // Start spinner
+    setLoading(true); // Start loading
     setErrors({}); // Clear old errors
 
     try {
       await login(email, password);
       navigate("/");
     } catch (err) {
-      // Show backend error message if available
+      // Show backend error message if there is any
       const message = err?.response?.data?.message || "Login failed";
       alert(message);
     } finally {
-      setLoading(false); // Stop spinner
+      setLoading(false); // Stop loading
     }
   };
 

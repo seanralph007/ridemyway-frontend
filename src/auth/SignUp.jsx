@@ -2,7 +2,6 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import './AuthStyles.css';
-import Select from 'react-select'
 
 export default function Signup() {
   const { signup, login } = useContext(AuthContext);
@@ -12,11 +11,12 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     role: ""
   });
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // loading state
+  const [loading, setLoading] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,41 +27,43 @@ export default function Signup() {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.role.trim()) newErrors.role = "Select a role between 'Driver' or 'Passenger'";
     if (!form.password.trim()) newErrors.password = "Password is required";
+    if (!form.confirmPassword.trim()) newErrors.confirmPassword = "Confirm Password is required";
+    if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
     return newErrors;
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setErrors({}); // clear old errors
+    setErrors({});
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    setLoading(true); // START loading
+    setLoading(true);
     try {
-      await signup(form);
-      console.log("Signup successful");
+      const { confirmPassword, ...userData } = form; //removed confirm password input before sending
+      await signup(userData);
       await login(form.email, form.password);
-      console.log("Auto-login successful");
       navigate("/");
     } catch (err) {
       console.error("Signup/login error:", err?.response?.data || err.message);
       alert(err?.response?.data?.message || "Signup or auto-login failed");
+    } finally {
+      setLoading(false);
     }
-    
   };
-
-//   const options = [
-//     {value: 'driver', label: 'Driver'},
-//     {value: 'passenger', label: 'Passenger'}
-//  ]
 
   return (
     <form className="signup-container" onSubmit={handleSubmit}>
       <h2>Signup</h2>
+
+      {errors.role && <p style={{ color: "red" }}>{errors.role}</p>}
       <select
         className="role"
         name="role"
@@ -72,7 +74,7 @@ export default function Signup() {
         <option value="passenger">Passenger</option>
         <option value="driver">Driver</option>
       </select>
-      {/* <Select className='role' options={options} placeholder='Choose role ...' /> */}
+
       <input
         name="name"
         placeholder="Name"
@@ -97,6 +99,17 @@ export default function Signup() {
         onChange={handleChange}
       />
       {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+
+      <input
+        name="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+        value={form.confirmPassword}
+        onChange={handleChange}
+      />
+      {errors.confirmPassword && (
+        <p style={{ color: "red" }}>{errors.confirmPassword}</p>
+      )}
 
       <button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Signup"}
