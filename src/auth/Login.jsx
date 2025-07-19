@@ -11,9 +11,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false); // Usestate that declares the  Loading state
 
-  // Validate the form
+  // Validate the form/ make sure the name and password is provided before proceeding
   const validateForm = () => {
     const newErrors = {};
     if (!email.trim()) newErrors.email = "Email is required";
@@ -30,18 +30,18 @@ export default function Login() {
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true); // Start the loading
     setErrors({}); // Clear old errors
 
     try {
       await login(email, password);
       navigate("/");
-    } catch (err) {
+    } catch (error) {
       // Show backend error message if there is any
       const message = err?.response?.data?.message || "Login failed";
       alert(message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); // Stop the loading
     }
   };
 

@@ -25,7 +25,7 @@ const DriverDashboard = () => {
     fetchOffers();
   }, []);
 
-  // Accept or reject ride request
+  // Accept or reject ride requests
   const handleRequestAction = async (requestId, action) => {
     try {
       await api.put(`/ride-requests/${requestId}`, { status: action });
