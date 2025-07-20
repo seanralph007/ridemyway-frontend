@@ -41,7 +41,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Sidebar for small screens */}
+      {/* Sidebar for the smaller screens */}
       <div className={`sidebar ${menuOpen ? "open" : ""}`}>
         <button className="close-btn" onClick={closeMenu}>×</button>
 

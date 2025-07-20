@@ -12,7 +12,7 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     const verify = async () => {
-      //Fetch query parameters from the URL
+      //Fetch the query parameters from the URL
       const token = searchParams.get("token");
       const email = searchParams.get("email");
 
@@ -23,7 +23,7 @@ export default function VerifyEmail() {
       }
 
       try {
-        // Call the backend verification endpoint
+        // Call the backend verification
         const res = await api.get(`/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`);
         setMessage(res.data.message || "Email verified!");
 

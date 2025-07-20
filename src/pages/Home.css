@@ -19,7 +19,6 @@ h2 {
 }
 
 .ride {
-    /* border: 2px solid black; */
     border: 1px solid #c9c9c9;
     background: #7e7e7e;
     padding: 1rem;
@@ -49,8 +48,6 @@ p {
         flex-direction: column;
         /* gap: 10px; */
         align-items: center;
-        /* margin-top: 2rem; */
-        /* flex-wrap: wrap; */
     }
     .home-container {
         margin: 1rem auto;

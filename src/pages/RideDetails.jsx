@@ -16,7 +16,6 @@ export default function RideDetails() {
       try {
         const res = await api.get(`/rides/${id}`);
         if (!res.data) {
-          // handle not found
           console.log("Ride not found");
         } else {
           setRide(res.data);
