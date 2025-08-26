@@ -139,7 +139,8 @@ export default function Home() {
         })}
       </MapContainer>
 
-      {/* 🚗 Ride list */}
+      {/* Ride list */}
+      <h3>Available Rides</h3>
       <div className="ride-list">
         {filteredRides.length > 0 ? (
           filteredRides.map((ride) => (
@@ -151,13 +152,23 @@ export default function Home() {
                 Departure:{" "}
                 {new Date(ride.departure_time).toLocaleString("en-US")}
               </p>
-              <p>
+              <img
+                src={
+                  ride.car_type === "bus"
+                    ? "/images/busPicx.png"
+                    : "/images/carPicx.png"
+                }
+                alt={ride.car_type}
+                width={100}
+              />{" "}
+              <p>{ride.available_seats} seats available</p>
+              {/* <p>
                 {ride.car_type} | {ride.available_seats} seats
-              </p>
+              </p> */}
             </div>
           ))
         ) : (
-          <p>No rides found.</p>
+          <p>No rides currently available.</p>
         )}
       </div>
     </div>
