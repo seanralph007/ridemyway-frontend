@@ -11,13 +11,14 @@ import RideDetails from "./pages/RideDetails";
 import DriverDashboard from "./pages/DriverDashboard";
 import PassengerDashboard from "./pages/PassengerDashBoard";
 import VerifyEmail from "./pages/VerifyEmail";
-import Footer from "./components/Footer/Footer";
-import './App.css';
+import LoadingScreen from "./components/LoadingScreen";
+// import Footer from "./components/Footer/Footer";
+import "./App.css";
 
 function AppRoutes() {
   const { loading } = useContext(AuthContext);
 
-  if (loading) return <p>Loading session...</p>; // Avoids premature rendering
+  if (loading) return <LoadingScreen text="Loading..." />; // Avoids premature rendering
 
   return (
     <>
@@ -28,10 +29,30 @@ function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/rides/:id" element={<RideDetails />} />
-        {/* <Route path="/rides/:id" element={<ProtectedRoute><RideDetails /></ProtectedRoute>} /> */}
-        <Route path="/create" element={<ProtectedRoute><CreateRide /></ProtectedRoute>} />
-        <Route path="/driver" element={<ProtectedRoute><DriverDashboard /></ProtectedRoute>} />
-        <Route path="/passenger" element={<ProtectedRoute><PassengerDashboard /></ProtectedRoute>} />
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <CreateRide />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/driver"
+          element={
+            <ProtectedRoute>
+              <DriverDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/passenger"
+          element={
+            <ProtectedRoute>
+              <PassengerDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

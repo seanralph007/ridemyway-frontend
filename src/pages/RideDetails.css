@@ -1,21 +1,27 @@
-/* .container {
-    margin: 0 auto;
-    padding: 70px 0;
-    text-align: center;
-} */
+.container {
+  margin: 0 auto;
+  padding: 70px 0;
+  text-align: center;
+}
 
 /* p {
-    color: #292727;
+  color: #292727;
 } */
 
 .swal-popup {
-    width: 25rem;
-    height: auto;
+  width: 25rem;
+  height: auto;
 }
 
+/* .loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
 @media (max-width: 768px) {
-    .swal-popup {
-        width: 20rem;
-        height: auto;
-    }
+  .swal-popup {
+    width: 20rem;
+    height: auto;
+  }
 }

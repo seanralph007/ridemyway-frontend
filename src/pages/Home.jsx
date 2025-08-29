@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/api";
 import {
   MapContainer,
@@ -150,7 +151,14 @@ export default function Home() {
               </h4>
               <p>
                 Departure:{" "}
-                {new Date(ride.departure_time).toLocaleString("en-US")}
+                {new Date(ride.departure_time).toLocaleString(undefined, {
+                  year: "numeric",
+                  month: "numeric",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
               </p>
               <img
                 src={
@@ -162,13 +170,17 @@ export default function Home() {
                 width={100}
               />{" "}
               <p>{ride.available_seats} seats available</p>
+              <br />
+              <Link to={`/rides/${ride.id}`} className="link">
+                More Ride Details --{" "}
+              </Link>
               {/* <p>
                 {ride.car_type} | {ride.available_seats} seats
               </p> */}
             </div>
           ))
         ) : (
-          <p>No rides currently available.</p>
+          <p className="loading">No rides currently available.</p>
         )}
       </div>
     </div>

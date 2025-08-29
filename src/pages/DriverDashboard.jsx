@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
+import LoadingScreen from "../components/LoadingScreen";
+import Swal from "sweetalert2";
 import api from "../api/api";
-import './Dashboard.css';
+import "./Dashboard.css";
 
 const DriverDashboard = () => {
   const [rides, setRides] = useState([]);
@@ -36,13 +37,18 @@ const DriverDashboard = () => {
     }
   };
 
-  if (loading) return <p>Loading your dashboard...</p>;
+  if (loading)
+    return (
+      <div>
+        <LoadingScreen text="Loading your dashboard..." />
+      </div>
+    );
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   // Delete ride
   // const deleteRide = async (rideId) => {
   //   if (!window.confirm("Are you sure you want to delete this ride?")) return;
-  
+
   //   try {
   //     await api.delete(`/rides/${rideId}`);
   //     alert("Ride deleted.");
@@ -55,52 +61,51 @@ const DriverDashboard = () => {
 
   const deleteRide = async (rideId) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "This ride will be permanently deleted.",
-      icon: 'warning',
+      icon: "warning",
       customClass: {
-        popup: 'swal-popup',
-        icon: 'swal-icon',
+        popup: "swal-popup",
+        icon: "swal-icon",
       },
-      color: '#252525',
+      color: "#252525",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#292727',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#292727",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
     });
-  
+
     if (!result.isConfirmed) return;
-  
+
     try {
       await api.delete(`/rides/${rideId}`);
       Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
-        text: 'Your ride was successfully deleted.',
+        icon: "success",
+        title: "Deleted!",
+        text: "Your ride was successfully deleted.",
         timer: 2000,
         showConfirmButton: false,
-        color: '#252525',
+        color: "#252525",
         customClass: {
-          popup: 'swal-popup',
-          icon: 'swal-icon',
-        }
+          popup: "swal-popup",
+          icon: "swal-icon",
+        },
       });
       fetchOffers(); // Refresh rides
     } catch (err) {
       console.error("Failed to delete ride:", err);
       Swal.fire({
-        icon: 'error',
-        title: 'Oops!',
-        text: 'Something went wrong while deleting.',
-        color: '#252525',
+        icon: "error",
+        title: "Oops!",
+        text: "Something went wrong while deleting.",
+        color: "#252525",
         customClass: {
-          popup: 'swal-popup',
-        }
+          popup: "swal-popup",
+        },
       });
     }
-  };  
-  
+  };
 
   return (
     <div className="dashboard-container">
@@ -130,14 +135,16 @@ const DriverDashboard = () => {
                 </button>
               </h3>
               <p>
-                <strong>Departure:</strong> {new Date(ride.departure_time).toLocaleString(undefined, {
+                <strong>Departure:</strong>{" "}
+                {new Date(ride.departure_time).toLocaleString(undefined, {
                   year: "numeric",
                   month: "numeric",
                   day: "numeric",
                   hour: "numeric",
                   minute: "2-digit",
-                  hour12: true
-                })} <br />
+                  hour12: true,
+                })}{" "}
+                <br />
                 {/* {new Date(ride.departure_time).toLocaleString()} <br /> */}
                 <strong>Available Seats:</strong> {ride.available_seats}
               </p>
@@ -148,7 +155,8 @@ const DriverDashboard = () => {
                 <p>No requests for this ride yet.</p>
               ) : (
                 ride.requests.map((req) => (
-                  <div className="req-details"
+                  <div
+                    className="req-details"
                     key={req.id}
                     style={{
                       padding: "0.75rem",
@@ -164,12 +172,16 @@ const DriverDashboard = () => {
                     {req.status === "pending" && (
                       <div className="button-container">
                         <button
-                          onClick={() => handleRequestAction(req.id, "accepted")}
+                          onClick={() =>
+                            handleRequestAction(req.id, "accepted")
+                          }
                         >
                           Accept
                         </button>
                         <button
-                          onClick={() => handleRequestAction(req.id, "rejected")}
+                          onClick={() =>
+                            handleRequestAction(req.id, "rejected")
+                          }
                           style={{ color: "red" }}
                         >
                           Reject
@@ -181,9 +193,8 @@ const DriverDashboard = () => {
               )}
             </div>
           ))
-        )}        
+        )}
       </div>
-
     </div>
   );
 };

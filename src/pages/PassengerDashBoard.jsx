@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
+import LoadingScreen from "../components/LoadingScreen";
+import Swal from "sweetalert2";
 import api from "../api/api";
-import './Dashboard.css';
+import "./Dashboard.css";
 import React from "react";
 
 export default function PassengerDashboard() {
@@ -28,7 +29,7 @@ export default function PassengerDashboard() {
   // const deleteRequest = async (requestId) => {
   //   const confirm = window.confirm("Are you sure you want to cancel this request?");
   //   if (!confirm) return;
-  
+
   //   try {
   //     await api.delete(`/ride-requests/${requestId}`);
   //     alert("Request cancelled.");
@@ -41,51 +42,50 @@ export default function PassengerDashboard() {
 
   const deleteRequest = async (requestId) => {
     const result = await Swal.fire({
-      title: 'Cancel Ride Request?',
+      title: "Cancel Ride Request?",
       text: "This action cannot be undone.",
-      icon: 'warning',
+      icon: "warning",
       customClass: {
-        popup: 'swal-popup',
-        icon: 'swal-icon',
+        popup: "swal-popup",
+        icon: "swal-icon",
       },
-      color: '#252525',
+      color: "#252525",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#292727',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No'
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#292727",
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No",
     });
-  
+
     if (!result.isConfirmed) return;
-  
+
     try {
       await api.delete(`/ride-requests/${requestId}`);
       Swal.fire({
-        title: 'Cancelled!',
-        text: 'Your ride request was successfully removed.',
-        icon: 'success',
+        title: "Cancelled!",
+        text: "Your ride request was successfully removed.",
+        icon: "success",
         timer: 2000,
         showConfirmButton: false,
-        color: '#252525',
+        color: "#252525",
         customClass: {
-          popup: 'swal-popup',
-          icon: 'swal-icon',
-        }
+          popup: "swal-popup",
+          icon: "swal-icon",
+        },
       });
-  
+
       setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
     } catch (err) {
       console.error("Failed to delete request:", err.message);
       Swal.fire({
-        title: 'Error',
-        text: 'Could not cancel the request. Please try again.',
-        icon: 'error'
+        title: "Error",
+        text: "Could not cancel the request. Please try again.",
+        icon: "error",
       });
     }
   };
-  
 
-  if (loading) return <p>Loading your ride requests...</p>;
+  if (loading) return <LoadingScreen text="Loading your ride requests..." />;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
@@ -105,21 +105,33 @@ export default function PassengerDashboard() {
                 borderRadius: "8px",
                 padding: "1rem",
                 marginBottom: "1rem",
-                background: "#cccccc"
+                background: "#cccccc",
               }}
             >
               <p>
                 <strong>Destination:</strong> {req.destination} <br />
-                <strong>Departure Time:</strong> {new Date(req.departure_time).toLocaleString(undefined, {
+                <strong>Departure Time:</strong>{" "}
+                {new Date(req.departure_time).toLocaleString(undefined, {
                   year: "numeric",
                   month: "numeric",
                   day: "numeric",
                   hour: "numeric",
                   minute: "2-digit",
-                  hour12: true
-                })} <br />
+                  hour12: true,
+                })}{" "}
+                <br />
                 <strong>Status:</strong>{" "}
-                <span style={{ color: req.status === "accepted" ? "green" : req.status === "rejected" ? "red" : "orange", fontWeight: "bold" }}>
+                <span
+                  style={{
+                    color:
+                      req.status === "accepted"
+                        ? "green"
+                        : req.status === "rejected"
+                        ? "red"
+                        : "orange",
+                    fontWeight: "bold",
+                  }}
+                >
                   {req.status.toUpperCase()}
                 </span>
                 {/* <span
@@ -137,16 +149,23 @@ export default function PassengerDashboard() {
                 </span> */}
               </p>
               <button
-                style={{border: "1px solid #ccc", cursor: "pointer", color: "red" }}
+                style={{
+                  border: "1px solid #ccc",
+                  cursor: "pointer",
+                  color: "red",
+                }}
                 onClick={() => deleteRequest(req.id)}
               >
-                {req.status === 'accepted' ? 'Delete': req.status === 'rejected' ? 'Delete' : 'Cancel Request'}
+                {req.status === "accepted"
+                  ? "Delete"
+                  : req.status === "rejected"
+                  ? "Delete"
+                  : "Cancel Request"}
               </button>
             </div>
           ))
-        )}        
+        )}
       </div>
-
     </div>
   );
 }
