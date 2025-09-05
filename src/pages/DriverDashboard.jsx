@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
-import LoadingScreen from "../components/LoadingScreen";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import api from "../api/api";
+import LoadingScreen from "../components/LoadingScreen";
+import { getMyOffers, deleteRideById } from "../api/rideService";
+import { updateRequestStatus } from "../api/requestService";
 import "./Dashboard.css";
 
-const DriverDashboard = () => {
+export default function DriverDashboard() {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch all ride offers + their requests
+  // Fetch driver's ride offers
   const fetchOffers = async () => {
     try {
-      const res = await api.get("/rides/my-offers");
-      setRides(res.data);
+      const res = await getMyOffers();
+      setRides(res);
     } catch (err) {
-      console.error("Failed to fetch offers:", err);
+      console.error("❌ Failed to fetch offers:", err);
       setError("Unable to load your rides. Please try again later.");
     } finally {
       setLoading(false);
@@ -26,74 +27,43 @@ const DriverDashboard = () => {
     fetchOffers();
   }, []);
 
-  // Accept or reject ride requests
+  // Accept/reject requests
   const handleRequestAction = async (requestId, action) => {
     try {
-      await api.put(`/ride-requests/${requestId}`, { status: action });
-      await fetchOffers(); // Refresh dashboard
+      await updateRequestStatus(requestId, action);
+      fetchOffers(); // Refresh dashboard
     } catch (err) {
-      console.error(`Failed to ${action} request:`, err);
-      alert(`Failed to ${action} the request. Try again.`);
+      console.error(`❌ Failed to ${action} request:`, err);
+      Swal.fire("Error", `Failed to ${action} request. Try again.`, "error");
     }
   };
 
-  if (loading)
-    return (
-      <div>
-        <LoadingScreen text="Loading your dashboard..." />
-      </div>
-    );
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   // Delete ride
-
-  const deleteRide = async (rideId) => {
+  const handleDeleteRide = async (rideId) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "This ride will be permanently deleted.",
       icon: "warning",
-      customClass: {
-        popup: "swal-popup",
-        icon: "swal-icon",
-      },
-      color: "#252525",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#292727",
       confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      await api.delete(`/rides/${rideId}`);
-      Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: "Your ride was successfully deleted.",
-        timer: 2000,
-        showConfirmButton: false,
-        color: "#252525",
-        customClass: {
-          popup: "swal-popup",
-          icon: "swal-icon",
-        },
-      });
-      fetchOffers(); // Refresh rides
+      await deleteRideById(rideId);
+      Swal.fire("Deleted!", "Your ride was deleted.", "success");
+      fetchOffers();
     } catch (err) {
-      console.error("Failed to delete ride:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Something went wrong while deleting.",
-        color: "#252525",
-        customClass: {
-          popup: "swal-popup",
-        },
-      });
+      console.error("❌ Failed to delete ride:", err);
+      Swal.fire("Error", "Something went wrong while deleting.", "error");
     }
   };
+
+  if (loading) return <LoadingScreen text="Loading your dashboard..." />;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="dashboard-container">
@@ -103,60 +73,33 @@ const DriverDashboard = () => {
           <p>You haven't offered any rides yet.</p>
         ) : (
           rides.map((ride) => (
-            <div
-              key={ride.id}
-              className="req-box"
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "1rem",
-                marginBottom: "1.5rem",
-              }}
-            >
+            <div key={ride.id} className="req-box">
               <h3>
                 {ride.origin} ➜ {ride.destination}
                 <button
-                  style={{ marginLeft: "1rem", color: "red" }}
-                  onClick={() => deleteRide(ride.id)}
+                  className="delete-btn"
+                  onClick={() => handleDeleteRide(ride.id)}
                 >
                   Delete Ride
                 </button>
               </h3>
+
               <p>
                 <strong>Departure:</strong>{" "}
-                {new Date(ride.departure_time).toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })}{" "}
-                <br />
-                {/* {new Date(ride.departure_time).toLocaleString()} <br /> */}
+                {new Date(ride.departure_time).toLocaleString()} <br />
                 <strong>Available Seats:</strong> {ride.available_seats}
               </p>
 
               <h4>Passenger Requests:</h4>
-
               {ride.requests?.length === 0 ? (
                 <p>No requests for this ride yet.</p>
               ) : (
                 ride.requests.map((req) => (
-                  <div
-                    className="req-details"
-                    key={req.id}
-                    style={{
-                      padding: "0.75rem",
-                      borderRadius: "6px",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
+                  <div key={req.id} className="req-details">
                     <p>
                       <strong>Passenger:</strong> {req.passenger_name} <br />
                       <strong>Status:</strong> {req.status}
                     </p>
-
                     {req.status === "pending" && (
                       <div className="button-container">
                         <button
@@ -185,6 +128,4 @@ const DriverDashboard = () => {
       </div>
     </div>
   );
-};
-
-export default DriverDashboard;
+}

@@ -1,18 +1,18 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "../api/api";
 import { AuthContext } from "../context/AuthContext";
+import authService from "../api/authService";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const [message, setMessage] = useState("Verifying email...");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { fetchUser } = useContext(AuthContext); // ensures user is refreshed after auto-login
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const verify = async () => {
-      //Fetch the query parameters from the URL
       const token = searchParams.get("token");
       const email = searchParams.get("email");
 
@@ -23,18 +23,23 @@ export default function VerifyEmail() {
       }
 
       try {
-        // Call the backend verification
-        const res = await api.get(`/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`);
-        setMessage(res.data.message || "Email verified!");
+        // ✅ Call authService (not api directly)
+        const res = await authService.verifyEmail(token, email);
+        setMessage(res.message || "Email verified!");
 
-        await fetchUser(); // refresh user in AuthContext
-        // Redirect after 2 seconds
+        // Optional auto-redirect if already logged in
         setTimeout(() => {
-          navigate("/"); // redirect after success
+          if (user) {
+            navigate("/"); // logged-in user → go home
+          } else {
+            navigate("/login"); // not logged-in user → login
+          }
         }, 2000);
       } catch (err) {
-        console.error("Verification failed:", err);
-        const msg = err?.response?.data?.message || "Something went wrong during verification.";
+        console.error("❌ Verification failed:", err);
+        const msg =
+          err?.response?.data?.message ||
+          "Something went wrong during verification.";
         setMessage(msg);
       } finally {
         setLoading(false);
@@ -42,13 +47,16 @@ export default function VerifyEmail() {
     };
 
     verify();
-  }, [searchParams, navigate, fetchUser]);
+  }, [searchParams, navigate, user]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "4rem" }}>
       <h2>Email Verification</h2>
-      <p>{message}</p>
-      {loading && <p>Verifying...</p>}
+      {loading ? (
+        <LoadingScreen text="Verifying your email..." />
+      ) : (
+        <p>{message}</p>
+      )}
     </div>
   );
 }

@@ -1,7 +1,9 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
-import api from "../api/api";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { createRide } from "../api/rideService";
+import { validateRide } from "../utils/validations";
+import { getCoordinates } from "../utils/mapUtils";
 import "./CreateRide.css";
 
 export default function CreateRide() {
@@ -20,96 +22,39 @@ export default function CreateRide() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // fetch lat/lng for a place
-  const fetchCoordinates = async (place) => {
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          place
-        )}`
-      );
-      const data = await res.json();
-      if (data.length > 0) {
-        return {
-          lat: parseFloat(data[0].lat),
-          lng: parseFloat(data[0].lon),
-        };
-      }
-    } catch (err) {
-      console.error("❌ Failed to fetch coordinates:", err);
-    }
-    return { lat: null, lng: null };
-  };
-
+  // Handle input changes + fetch lat/lng when origin or destination changes
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setRide((prev) => ({ ...prev, [name]: value }));
-    setErrors({ ...errors, [name]: "" }); // clear field error
+    setErrors((prev) => ({ ...prev, [name]: "" }));
 
-    // If origin/destination is updated, also fetch lat/lng
-    if (name === "origin" && value.trim()) {
-      const coords = await fetchCoordinates(value);
+    if ((name === "origin" || name === "destination") && value.trim()) {
+      const coords = await getCoordinates(value);
       setRide((prev) => ({
         ...prev,
-        origin: value,
-        origin_lat: coords.lat,
-        origin_lng: coords.lng,
-      }));
-    }
-    if (name === "destination" && value.trim()) {
-      const coords = await fetchCoordinates(value);
-      setRide((prev) => ({
-        ...prev,
-        destination: value,
-        destination_lat: coords.lat,
-        destination_lng: coords.lng,
+        [`${name}_lat`]: coords.lat,
+        [`${name}_lng`]: coords.lng,
       }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!ride.origin.trim()) newErrors.origin = "Origin is required";
-    if (!ride.destination.trim())
-      newErrors.destination = "Destination is required";
-    if (!ride.departure_time)
-      newErrors.departure_time = "Departure time is required";
-    if (!ride.car_type) newErrors.car_type = "Car type is required";
-    if (
-      !ride.available_seats ||
-      isNaN(ride.available_seats) ||
-      ride.available_seats <= 0
-    ) {
-      newErrors.available_seats = "Enter a valid number of available seats";
-    }
-    return newErrors;
-  };
-
+  // Form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    const validationErrors = validateRide(ride);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
     try {
-      await api.post("/rides", ride);
+      await createRide(ride);
       Swal.fire({
         title: "Success!",
         text: "Ride created successfully.",
         icon: "success",
-        customClass: {
-          popup: "my-swal-popup",
-          title: "my-swal-title",
-          content: "my-swal-content",
-          icon: "my-swal-icon",
-        },
-        confirmButtonText: "Ok",
         confirmButtonColor: "#505050",
-        background: "#cccccc",
-        color: "#252525",
       });
       navigate("/");
     } catch (err) {
@@ -132,7 +77,7 @@ export default function CreateRide() {
         <option value="car">Car</option>
         <option value="bus">Bus</option>
       </select>
-      {errors.car_type && <p style={{ color: "red" }}>{errors.car_type}</p>}
+      {errors.car_type && <p className="error">{errors.car_type}</p>}
 
       <input
         name="origin"
@@ -141,7 +86,7 @@ export default function CreateRide() {
         placeholder="Origin"
         className="input"
       />
-      {errors.origin && <p style={{ color: "red" }}>{errors.origin}</p>}
+      {errors.origin && <p className="error">{errors.origin}</p>}
 
       <input
         name="destination"
@@ -150,9 +95,7 @@ export default function CreateRide() {
         placeholder="Destination"
         className="input"
       />
-      {errors.destination && (
-        <p style={{ color: "red" }}>{errors.destination}</p>
-      )}
+      {errors.destination && <p className="error">{errors.destination}</p>}
 
       <label>Departure Date & Time:</label>
       <input
@@ -163,7 +106,7 @@ export default function CreateRide() {
         onChange={handleChange}
       />
       {errors.departure_time && (
-        <p style={{ color: "red" }}>{errors.departure_time}</p>
+        <p className="error">{errors.departure_time}</p>
       )}
 
       <input
@@ -174,7 +117,7 @@ export default function CreateRide() {
         placeholder="Number of available seats"
       />
       {errors.available_seats && (
-        <p style={{ color: "red" }}>{errors.available_seats}</p>
+        <p className="error">{errors.available_seats}</p>
       )}
 
       <button type="submit">Post Ride</button>

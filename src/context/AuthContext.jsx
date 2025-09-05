@@ -1,47 +1,66 @@
-import { createContext, useEffect, useState } from "react";
-import api from "../api/api";
+import { createContext, useState, useEffect } from "react";
+import authService from "../api/authService";
 
+// Create context
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// AuthProvider component
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null); // holds logged-in user
+  const [loading, setLoading] = useState(true); // initial loading state
 
-  const fetchUser = async () => {
-    try {
-      const res = await api.get("/auth/me");
-      setUser(res.data.user);
-      console.log("✅ User authenticated:", res.data.user);
-    } catch (err) {
-      console.warn("⚠️ Failed to fetch user:", err.response?.data?.message || err.message);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Load user from backend on mount (session check)
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const data = await authService.getCurrentUser();
+        setUser(data.user || null);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchUser();
   }, []);
 
+  // Login method
   const login = async (email, password) => {
-    await api.post("/auth/login", { email, password });
-    await fetchUser();
+    const data = await authService.login({ email, password });
+    setUser(data.user);
+    return data;
   };
 
-  const signup = async (formData) => {
-    await api.post("/auth/signup", formData);
-    // await fetchUser();
+  // Signup method
+  const signup = async (userData) => {
+    const data = await authService.signup(userData);
+    return data;
   };
 
+  // Logout method
   const logout = async () => {
-    await api.post("/auth/logout");
+    await authService.logout();
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, fetchUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  // Verify email with token and email
+  const verifyEmail = async (token, email) => {
+    const res = await api.get(
+      `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
+    );
+    return res.data; // returns { message: "..." }
+  };
+
+  // Context value
+  const value = {
+    user,
+    loading,
+    login,
+    signup,
+    logout,
+    verifyEmail,
+    isAuthenticated: !!user,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

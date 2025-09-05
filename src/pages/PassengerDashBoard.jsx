@@ -1,153 +1,85 @@
 import { useEffect, useState } from "react";
-import LoadingScreen from "../components/LoadingScreen";
 import Swal from "sweetalert2";
-import api from "../api/api";
+import LoadingScreen from "../components/LoadingScreen";
+import { getMyRequests, cancelRequest } from "../api/requestService";
 import "./Dashboard.css";
-import React from "react";
 
 export default function PassengerDashboard() {
-  const [myRequests, setMyRequests] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const res = await api.get("/rides/my-requests");
-        setMyRequests(res.data);
-      } catch (err) {
-        console.error("Failed to fetch passenger requests:", err);
-        setError("Could not load your ride requests.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch passenger's ride requests
+  const fetchRequests = async () => {
+    try {
+      const res = await getMyRequests();
+      setRequests(res);
+    } catch (err) {
+      console.error("❌ Failed to fetch requests:", err);
+      setError("Unable to load your ride requests. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRequests();
   }, []);
 
-  const deleteRequest = async (requestId) => {
+  // Cancel request
+  const handleCancel = async (requestId) => {
     const result = await Swal.fire({
-      title: "Cancel Ride Request?",
-      text: "This action cannot be undone.",
+      title: "Cancel request?",
+      text: "Do you really want to cancel this ride request?",
       icon: "warning",
-      customClass: {
-        popup: "swal-popup",
-        icon: "swal-icon",
-      },
-      color: "#252525",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#292727",
       confirmButtonText: "Yes, cancel it!",
-      cancelButtonText: "No",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      await api.delete(`/ride-requests/${requestId}`);
-      Swal.fire({
-        title: "Cancelled!",
-        text: "Your ride request was successfully removed.",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-        color: "#252525",
-        customClass: {
-          popup: "swal-popup",
-          icon: "swal-icon",
-        },
-      });
-
-      setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
+      await cancelRequest(requestId);
+      Swal.fire("Cancelled!", "Your request was cancelled.", "success");
+      fetchRequests();
     } catch (err) {
-      console.error("Failed to delete request:", err.message);
-      Swal.fire({
-        title: "Error",
-        text: "Could not cancel the request. Please try again.",
-        icon: "error",
-      });
+      console.error("❌ Failed to cancel request:", err);
+      Swal.fire("Error", "Something went wrong while cancelling.", "error");
     }
   };
 
-  if (loading) return <LoadingScreen text="Loading your ride requests..." />;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <LoadingScreen text="Loading your dashboard..." />;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="dashboard-container">
       <h2>Passenger Dashboard</h2>
-      <p className="req-subtitle">Your ride requests:</p>
       <div className="req-container">
-        {myRequests.length === 0 ? (
-          <p>You have not requested any rides yet.</p>
+        {requests.length === 0 ? (
+          <p>You haven't requested any rides yet.</p>
         ) : (
-          myRequests.map((req) => (
-            <div
-              className="request"
-              key={req.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "1rem",
-                marginBottom: "1rem",
-                background: "#cccccc",
-              }}
-            >
+          requests.map((req) => (
+            <div key={req.id} className="req-box">
+              <h3>
+                {req.ride.origin} ➜ {req.ride.destination}
+              </h3>
+
               <p>
-                <strong>Destination:</strong> {req.destination} <br />
-                <strong>Departure Time:</strong>{" "}
-                {new Date(req.departure_time).toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })}{" "}
-                <br />
-                <strong>Status:</strong>{" "}
-                <span
-                  style={{
-                    color:
-                      req.status === "accepted"
-                        ? "green"
-                        : req.status === "rejected"
-                        ? "red"
-                        : "orange",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {req.status.toUpperCase()}
-                </span>
-                {/* <span
-                  style={{
-                    color:
-                      req.status === "accepted"
-                        ? "green"
-                        : req.status === "rejected"
-                        ? "red"
-                        : "orange",
-                    fontWeight: "bold"
-                  }}
-                >
-                  {req.status.toUpperCase()}
-                </span> */}
+                <strong>Departure:</strong>{" "}
+                {new Date(req.ride.departure_time).toLocaleString()} <br />
+                <strong>Status:</strong> {req.status}
               </p>
-              <button
-                style={{
-                  border: "1px solid #ccc",
-                  cursor: "pointer",
-                  color: "red",
-                }}
-                onClick={() => deleteRequest(req.id)}
-              >
-                {req.status === "accepted"
-                  ? "Delete"
-                  : req.status === "rejected"
-                  ? "Delete"
-                  : "Cancel Request"}
-              </button>
+
+              {req.status === "pending" && (
+                <button
+                  className="cancel-btn"
+                  onClick={() => handleCancel(req.id)}
+                >
+                  Cancel Request
+                </button>
+              )}
             </div>
           ))
         )}

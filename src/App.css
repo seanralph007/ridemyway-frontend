@@ -20,3 +20,36 @@ body {
     width: 100%;
   }
 }
+
+/* Reusable form styles */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.form-input,
+.form-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: #007bff;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
