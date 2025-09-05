@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import './AuthStyles.css'
+import "./AuthStyles.css";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -46,7 +46,7 @@ export default function Login() {
   };
 
   return (
-    <form className='login-container' onSubmit={handleSubmit}>
+    <form className="login-container" onSubmit={handleSubmit}>
       <h2>Login</h2>
       <input
         className="input"

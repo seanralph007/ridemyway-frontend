@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import './AuthStyles.css';
+import "./AuthStyles.css";
 
 export default function Signup() {
   const { signup, login } = useContext(AuthContext);
@@ -12,13 +12,13 @@ export default function Signup() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: ""
+    role: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -27,16 +27,22 @@ export default function Signup() {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
-    if (!form.role.trim()) newErrors.role = "Select a role between 'Driver' or 'Passenger'";
+    if (!form.role.trim())
+      newErrors.role = "Select a role between 'Driver' or 'Passenger'";
     if (!form.password.trim()) newErrors.password = "Password is required";
-    if (!form.confirmPassword.trim()) newErrors.confirmPassword = "Confirm Password is required";
-    if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+    if (!form.confirmPassword.trim())
+      newErrors.confirmPassword = "Confirm Password is required";
+    if (
+      form.password &&
+      form.confirmPassword &&
+      form.password !== form.confirmPassword
+    ) {
       newErrors.confirmPassword = "Passwords do not match";
     }
     return newErrors;
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
     const validationErrors = validateForm();

@@ -26,20 +26,6 @@ export default function PassengerDashboard() {
     fetchRequests();
   }, []);
 
-  // const deleteRequest = async (requestId) => {
-  //   const confirm = window.confirm("Are you sure you want to cancel this request?");
-  //   if (!confirm) return;
-
-  //   try {
-  //     await api.delete(`/ride-requests/${requestId}`);
-  //     alert("Request cancelled.");
-  //     setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
-  //   } catch (err) {
-  //     console.error("Failed to delete request:", err.message);
-  //     alert("Could not delete request.");
-  //   }
-  // };
-
   const deleteRequest = async (requestId) => {
     const result = await Swal.fire({
       title: "Cancel Ride Request?",

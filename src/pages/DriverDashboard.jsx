@@ -46,18 +46,6 @@ const DriverDashboard = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   // Delete ride
-  // const deleteRide = async (rideId) => {
-  //   if (!window.confirm("Are you sure you want to delete this ride?")) return;
-
-  //   try {
-  //     await api.delete(`/rides/${rideId}`);
-  //     alert("Ride deleted.");
-  //     fetchOffers(); // Refresh the list
-  //   } catch (err) {
-  //     console.error("Failed to delete ride:", err);
-  //     alert("Failed to delete the ride.");
-  //   }
-  // };
 
   const deleteRide = async (rideId) => {
     const result = await Swal.fire({
