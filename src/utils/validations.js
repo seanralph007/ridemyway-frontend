@@ -34,3 +34,17 @@ export const validateSignup = ({
 
   return errors;
 };
+
+// Validate ride creation form
+export const validateRide = (ride) => {
+  const errors = {};
+  if (!ride.origin?.trim()) errors.origin = "Origin is required";
+  if (!ride.destination?.trim()) errors.destination = "Destination is required";
+  if (!ride.departure_time)
+    errors.departure_time = "Departure time is required";
+  if (!ride.car_type) errors.car_type = "Car type is required";
+  if (!ride.available_seats || ride.available_seats <= 0) {
+    errors.available_seats = "Enter a valid number of seats";
+  }
+  return errors;
+};

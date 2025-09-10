@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { createRide } from "../api/rideService";
 import { validateRide } from "../utils/validations";
-import { getCoordinates } from "../utils/mapUtils";
+// import { getCoordinates } from "../utils/mapUtils";
 import "./CreateRide.css";
 
 export default function CreateRide() {
@@ -28,14 +28,14 @@ export default function CreateRide() {
     setRide((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
 
-    if ((name === "origin" || name === "destination") && value.trim()) {
-      const coords = await getCoordinates(value);
-      setRide((prev) => ({
-        ...prev,
-        [`${name}_lat`]: coords.lat,
-        [`${name}_lng`]: coords.lng,
-      }));
-    }
+    // if ((name === "origin" || name === "destination") && value.trim()) {
+    //   const coords = await getCoordinates(value);
+    //   setRide((prev) => ({
+    //     ...prev,
+    //     [`${name}_lat`]: coords.lat,
+    //     [`${name}_lng`]: coords.lng,
+    //   }));
+    // }
   };
 
   // Form submit
