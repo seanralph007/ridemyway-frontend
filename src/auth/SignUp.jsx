@@ -59,64 +59,62 @@ export default function SignUp() {
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
+    <form className="signup-container" onSubmit={handleSubmit}>
+      <h2>Signup</h2>
 
-        {errors.role && <ValidationError message={errors.role} />}
-        <SelectField
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="role"
-          options={[
-            { value: "", label: "Select Role" },
-            { value: "passenger", label: "Passenger" },
-            { value: "driver", label: "Driver" },
-          ]}
-        />
+      {errors.role && <ValidationError message={errors.role} />}
+      <SelectField
+        name="role"
+        value={formData.role}
+        onChange={handleChange}
+        className="role"
+        options={[
+          { value: "", label: "Select Role" },
+          { value: "passenger", label: "Passenger" },
+          { value: "driver", label: "Driver" },
+        ]}
+      />
 
-        <InputField
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        {errors.name && <ValidationError message={errors.name} />}
+      <InputField
+        name="name"
+        placeholder="Name"
+        value={formData.name}
+        onChange={handleChange}
+      />
+      {errors.name && <ValidationError message={errors.name} />}
 
-        <InputField
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        {errors.email && <ValidationError message={errors.email} />}
+      <InputField
+        name="email"
+        type="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+      {errors.email && <ValidationError message={errors.email} />}
 
-        <InputField
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {errors.password && <ValidationError message={errors.password} />}
+      <InputField
+        name="password"
+        type="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      {errors.password && <ValidationError message={errors.password} />}
 
-        <InputField
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-        {errors.confirmPassword && (
-          <ValidationError message={errors.confirmPassword} />
-        )}
+      <InputField
+        name="confirmPassword"
+        type="password"
+        placeholder="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+      />
+      {errors.confirmPassword && (
+        <ValidationError message={errors.confirmPassword} />
+      )}
 
-        <button className="auth-button" type="submit" disabled={loading}>
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
-      </form>
-    </div>
+      <button type="submit" disabled={loading}>
+        {loading ? "Submitting..." : "Signup"}
+      </button>
+    </form>
   );
 }
