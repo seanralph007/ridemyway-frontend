@@ -1,3 +1,15 @@
+// Format full date + time (old dashboard style)
+export const formatDateTime = (dateString) => {
+  return new Date(dateString).toLocaleString(undefined, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 // Format date to readable string
 export const formatDate = (dateString) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -17,3 +29,6 @@ export const formatCurrency = (amount, currency = "NGN") => {
     currency,
   }).format(amount);
 };
+
+// Get only year
+export const year = new Date().getFullYear();

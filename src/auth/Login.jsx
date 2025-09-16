@@ -1,10 +1,10 @@
-// src/auth/Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { validateLogin } from "../utils/validations";
 import InputField from "../components/forms/InputField";
 import ValidationError from "../components/forms/ValidationError";
+import { notifyError } from "../utils/notificationService";
 import "./AuthStyles.css";
 
 export default function Login() {
@@ -20,7 +20,7 @@ export default function Login() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setErrors({ ...errors, [e.target.name]: "" }); // clear field-specific error
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -35,36 +35,38 @@ export default function Login() {
     try {
       setLoading(true);
       await login(formData.email, formData.password);
-      navigate("/"); // go to homepage or dashboard
-    } catch (err) {
-      alert(err?.response?.data?.message || "Login failed");
+      navigate("/");
+    } catch (error) {
+      const message = error?.response?.data?.message || "Login failed";
+      notifyError("Error", message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <form className="login-container" onSubmit={handleSubmit}>
+      <h2>Login</h2>
 
-        <InputField
-          label="Email"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        {errors.email && <ValidationError message={errors.email} />}
+      <InputField
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        className="input"
+      />
+      {errors.email && <ValidationError message={errors.email} />}
 
-        <InputField
-          label="Password"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {errors.password && <ValidationError message={errors.password} />}
+      <InputField
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+        className="input"
+      />
+      {errors.password && <ValidationError message={errors.password} />}
 
         <button className="button" type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}

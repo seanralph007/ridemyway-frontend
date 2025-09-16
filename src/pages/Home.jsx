@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
@@ -10,7 +11,7 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
-import { getRidesBounds } from "../utils/mapUtils";
+import { getRidesBounds, calculateDistance } from "../utils/mapUtils";
 import "./Home.css";
 
 import "leaflet/dist/leaflet.css";
@@ -126,38 +127,56 @@ export default function Home() {
       <h3>Available Rides</h3>
       <div className="ride-list">
         {filteredRides.length > 0 ? (
-          filteredRides.map((ride) => (
-            <div key={ride.id} className="ride-card">
-              <h4>
-                {ride.origin} → {ride.destination}
-              </h4>
-              <p>
-                Departure:{" "}
-                {new Date(ride.departure_time).toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })}
-              </p>
-              <img
-                src={
-                  ride.car_type === "bus"
-                    ? "/images/busPicx.png"
-                    : "/images/carPicx.png"
-                }
-                alt={ride.car_type}
-                width={100}
-              />
-              <p>{ride.available_seats} seats available</p>
-              <br />
-              <Link to={`/rides/${ride.id}`} className="link">
-                More Ride Details →
-              </Link>
-            </div>
-          ))
+          filteredRides.map((ride) => {
+            let distance = null;
+            if (
+              ride.origin_lat &&
+              ride.origin_lng &&
+              ride.destination_lat &&
+              ride.destination_lng
+            ) {
+              distance = calculateDistance(
+                ride.origin_lat,
+                ride.origin_lng,
+                ride.destination_lat,
+                ride.destination_lng
+              );
+            }
+
+            return (
+              <div key={ride.id} className="ride-card">
+                <h4>
+                  {ride.origin} → {ride.destination}
+                </h4>
+                <p>
+                  Departure:{" "}
+                  {new Date(ride.departure_time).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </p>
+                {distance && <p>Distance: {distance.toFixed(1)} km</p>}
+                <img
+                  src={
+                    ride.car_type === "bus"
+                      ? "/images/busPicx.png"
+                      : "/images/carPicx.png"
+                  }
+                  alt={ride.car_type}
+                  width={100}
+                />
+                <p>{ride.available_seats} seats available</p>
+                <br />
+                <Link to={`/rides/${ride.id}`} className="link">
+                  More Ride Details →
+                </Link>
+              </div>
+            );
+          })
         ) : (
           <p className="loading">No rides currently available.</p>
         )}

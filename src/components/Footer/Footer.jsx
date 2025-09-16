@@ -1,14 +1,15 @@
 import React from "react";
 import "./Footer.css";
+import { year } from "../../utils/formatters";
 
 function Footer() {
-    const year = new Date().getFullYear();
-    return (
-      <footer className="footer-container">
-        <p className="footer-text">Designed and built by Chukwudi Kingsley Okoro</p>
-        <p className="footer-text">Copyright ⓒ {year}</p>
-      </footer>
-    );
+  // const date = year;
+  return (
+    <footer className="footer-container">
+      <p className="footer-text">Built and Designed by Kingsley Okoro</p>
+      <p className="footer-text">ⓒ {year}</p>
+    </footer>
+  );
 }
-  
+
 export default Footer;

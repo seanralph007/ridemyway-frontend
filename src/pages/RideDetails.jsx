@@ -1,14 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { AuthContext } from "../context/AuthContext";
 import { getRideById } from "../api/rideService";
 import { requestRide } from "../api/requestService";
+import {
+  notifySuccess,
+  notifyError,
+  notifyInfo,
+} from "../utils/notificationService";
+import { calculateDistance } from "../utils/mapUtils";
 import LoadingScreen from "../components/LoadingScreen";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Polyline,
+  Tooltip,
   Popup,
 } from "react-leaflet";
 import L from "leaflet";
@@ -28,6 +35,7 @@ L.Icon.Default.mergeOptions({
 
 export default function RideDetails() {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [ride, setRide] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +48,7 @@ export default function RideDetails() {
         setRide(res);
       } catch (err) {
         console.error("❌ Failed to fetch ride:", err);
-        Swal.fire("Error", "Ride not found.", "error");
+        notifyError("Error", "Ride not found.");
         navigate("/");
       } finally {
         setLoading(false);
@@ -53,11 +61,11 @@ export default function RideDetails() {
   const handleRequestRide = async () => {
     try {
       await requestRide(id);
-      Swal.fire("Success!", "Ride request sent successfully.", "success");
+      notifySuccess("Request sent!", "Your ride request was submitted.");
       navigate("/passenger-dashboard");
     } catch (err) {
       console.error("❌ Failed to request ride:", err);
-      Swal.fire("Error", "Could not request ride. Try again.", "error");
+      notifyError("Error", "Could not request ride. Try again.");
     }
   };
 
@@ -66,19 +74,52 @@ export default function RideDetails() {
 
   const origin = [ride.origin_lat, ride.origin_lng];
   const destination = [ride.destination_lat, ride.destination_lng];
+  const distance = calculateDistance(
+    ride.origin_lat,
+    ride.origin_lng,
+    ride.destination_lat,
+    ride.destination_lng
+  ).toFixed(1);
 
   return (
-    <div className="ride-details-container">
-      <h2>
-        {ride.origin} ➜ {ride.destination}
-      </h2>
-
+    <div className="container">
+      <h2>Going to: {ride.destination}</h2>
+      <p>
+        <strong>Driver Name:</strong> {ride.driver_name}
+      </p>
       <p>
         <strong>Departure:</strong>{" "}
         {new Date(ride.departure_time).toLocaleString()} <br />
         <strong>Car Type:</strong> {ride.car_type} <br />
         <strong>Seats Available:</strong> {ride.available_seats}
       </p>
+      <p>
+        <strong>Trip Distance:</strong> {distance} km
+      </p>
+      <img
+        src={
+          ride.car_type === "bus"
+            ? "/images/busPicx.png"
+            : "/images/carPicx.png"
+        }
+        alt={ride.car_type}
+        width={100}
+      />
+      <br />
+
+      {user ? (
+        <>
+          {user.id === ride.driver_id ? (
+            <p>You are the driver of this vehicle</p>
+          ) : (
+            <button className="request-btn" onClick={handleRequestRide}>
+              Request to Join
+            </button>
+          )}
+        </>
+      ) : (
+        <p>Login to request for this ride</p>
+      )}
 
       {/* Map */}
       <MapContainer
@@ -99,12 +140,10 @@ export default function RideDetails() {
         <Polyline
           positions={[origin, destination]}
           pathOptions={{ color: "blue" }}
-        />
+        >
+          <Tooltip sticky>{`${distance} km`}</Tooltip>
+        </Polyline>
       </MapContainer>
-
-      <button className="request-btn" onClick={handleRequestRide}>
-        Request Ride
-      </button>
     </div>
   );
 }

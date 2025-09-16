@@ -1,4 +1,3 @@
-// src/auth/SignUp.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -6,10 +5,11 @@ import { validateSignup } from "../utils/validations";
 import InputField from "../components/forms/InputField";
 import SelectField from "../components/forms/SelectField";
 import ValidationError from "../components/forms/ValidationError";
+import { notifySuccess, notifyError } from "../utils/notificationService";
 import "./AuthStyles.css";
 
 export default function SignUp() {
-  const { signup } = useAuth();
+  const { signup, login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -42,11 +42,17 @@ export default function SignUp() {
 
     try {
       setLoading(true);
-      await signup(formData);
-      alert("Signup successful! Please check your email for verification.");
-      navigate("/login");
+      const { confirmPassword, ...userData } = formData;
+      await signup(userData);
+
+      await login(formData.email, formData.password);
+
+      notifySuccess("Signup successful", "Welcome aboard!");
+      navigate("/");
     } catch (err) {
-      alert(err?.response?.data?.message || "Signup failed");
+      const message =
+        err?.response?.data?.message || "Signup or auto-login failed";
+      notifyError("Error", message);
     } finally {
       setLoading(false);
     }
@@ -57,50 +63,49 @@ export default function SignUp() {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Sign Up</h2>
 
+        {errors.role && <ValidationError message={errors.role} />}
+        <SelectField
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          className="role"
+          options={[
+            { value: "", label: "Select Role" },
+            { value: "passenger", label: "Passenger" },
+            { value: "driver", label: "Driver" },
+          ]}
+        />
+
         <InputField
-          label="Name"
-          type="text"
           name="name"
+          placeholder="Name"
           value={formData.name}
           onChange={handleChange}
         />
         {errors.name && <ValidationError message={errors.name} />}
 
         <InputField
-          label="Email"
-          type="email"
           name="email"
+          type="email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
         />
         {errors.email && <ValidationError message={errors.email} />}
 
-        <SelectField
-          label="Role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          options={[
-            { value: "", label: "Select role" },
-            { value: "driver", label: "Driver" },
-            { value: "passenger", label: "Passenger" },
-          ]}
-        />
-        {errors.role && <ValidationError message={errors.role} />}
-
         <InputField
-          label="Password"
-          type="password"
           name="password"
+          type="password"
+          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
         />
         {errors.password && <ValidationError message={errors.password} />}
 
         <InputField
-          label="Confirm Password"
-          type="password"
           name="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
         />

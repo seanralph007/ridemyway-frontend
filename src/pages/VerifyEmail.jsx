@@ -23,9 +23,11 @@ export default function VerifyEmail() {
       }
 
       try {
-        // ✅ Call authService (not api directly)
-        const res = await authService.verifyEmail(token, email);
-        setMessage(res.message || "Email verified!");
+        // Call the backend verification
+        const res = await api.get(
+          `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
+        );
+        setMessage(res.data.message || "Email verified!");
 
         // Optional auto-redirect if already logged in
         setTimeout(() => {
@@ -36,7 +38,7 @@ export default function VerifyEmail() {
           }
         }, 2000);
       } catch (err) {
-        console.error("❌ Verification failed:", err);
+        console.error("Verification failed:", err);
         const msg =
           err?.response?.data?.message ||
           "Something went wrong during verification.";
@@ -50,7 +52,7 @@ export default function VerifyEmail() {
   }, [searchParams, navigate, user]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "4rem" }}>
+    <div className="verify-container">
       <h2>Email Verification</h2>
       {loading ? (
         <LoadingScreen text="Verifying your email..." />

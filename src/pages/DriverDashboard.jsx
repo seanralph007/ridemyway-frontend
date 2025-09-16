@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import LoadingScreen from "../components/LoadingScreen";
 import { getMyOffers, deleteRideById } from "../api/rideService";
 import { updateRequestStatus } from "../api/requestService";
+import {
+  notifySuccess,
+  notifyError,
+  confirmAction,
+} from "../utils/notificationService";
 import "./Dashboard.css";
 
 export default function DriverDashboard() {
@@ -31,34 +35,31 @@ export default function DriverDashboard() {
   const handleRequestAction = async (requestId, action) => {
     try {
       await updateRequestStatus(requestId, action);
+      notifySuccess("Success", `Request ${action} successfully.`);
       fetchOffers(); // Refresh dashboard
     } catch (err) {
       console.error(`❌ Failed to ${action} request:`, err);
-      Swal.fire("Error", `Failed to ${action} request. Try again.`, "error");
+      notifyError("Error", `Failed to ${action} request. Try again.`);
     }
   };
 
   // Delete ride
   const handleDeleteRide = async (rideId) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This ride will be permanently deleted.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#292727",
-      confirmButtonText: "Yes, delete it!",
-    });
+    const result = await confirmAction(
+      "Are you sure?",
+      "This ride will be permanently deleted.",
+      "Yes, delete it!"
+    );
 
     if (!result.isConfirmed) return;
 
     try {
       await deleteRideById(rideId);
-      Swal.fire("Deleted!", "Your ride was deleted.", "success");
+      notifySuccess("Deleted!", "Your ride was successfully deleted.");
       fetchOffers();
     } catch (err) {
       console.error("❌ Failed to delete ride:", err);
-      Swal.fire("Error", "Something went wrong while deleting.", "error");
+      notifyError("Oops!", "Something went wrong while deleting.");
     }
   };
 
@@ -95,7 +96,15 @@ export default function DriverDashboard() {
                 <p>No requests for this ride yet.</p>
               ) : (
                 ride.requests.map((req) => (
-                  <div key={req.id} className="req-details">
+                  <div
+                    key={req.id}
+                    className="req-details"
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "6px",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
                     <p>
                       <strong>Passenger:</strong> {req.passenger_name} <br />
                       <strong>Status:</strong> {req.status}

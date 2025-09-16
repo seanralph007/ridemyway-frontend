@@ -1,4 +1,3 @@
-// src/utils/mapUtils.js
 import L from "leaflet";
 
 // Calculate distance between two coordinates (Haversine formula)
@@ -23,12 +22,28 @@ export const formatCoordinates = (lat, lon) => {
   return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
 };
 
-// Geocode dummy function (replace with API later)
-export const geocodeAddress = async (address) => {
-  return { lat: 6.5244, lon: 3.3792 }; // Lagos as fallback
+// Fetch lat/lng for a place using Nominatim API
+export const fetchCoordinates = async (place) => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        place
+      )}`
+    );
+    const data = await res.json();
+    if (data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon),
+      };
+    }
+  } catch (err) {
+    console.error("❌ Failed to fetch coordinates:", err);
+  }
+  return { lat: null, lng: null };
 };
 
-// 🔹 Fit map bounds to all rides
+// Fit map bounds to all rides
 export const getRidesBounds = (rides) => {
   const bounds = L.latLngBounds([]);
   rides.forEach((ride) => {
