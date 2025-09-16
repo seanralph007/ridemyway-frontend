@@ -96,6 +96,9 @@ export default function RideDetails() {
       <p>
         <strong>Trip Distance:</strong> {distance} km
       </p>
+      <p>
+        <strong>Trip Distance:</strong> {distance} km
+      </p>
       <img
         src={
           ride.car_type === "bus"
