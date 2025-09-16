@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
@@ -10,10 +11,12 @@ import {
   useMap,
 } from "react-leaflet";
 import L from "leaflet";
+import { getRidesBounds, calculateDistance } from "../utils/mapUtils";
 import "./Home.css";
 
-// Fix default Leaflet marker icons
 import "leaflet/dist/leaflet.css";
+
+// Fix default Leaflet icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -24,29 +27,13 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// 🔹 Component to auto-fit map bounds
+// 🔹 Auto-fit component
 function FitBounds({ rides }) {
   const map = useMap();
-
   useEffect(() => {
-    if (rides.length === 0) return;
-
-    const bounds = L.latLngBounds([]);
-
-    rides.forEach((ride) => {
-      if (ride.origin_lat && ride.origin_lng) {
-        bounds.extend([ride.origin_lat, ride.origin_lng]);
-      }
-      if (ride.destination_lat && ride.destination_lng) {
-        bounds.extend([ride.destination_lat, ride.destination_lng]);
-      }
-    });
-
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [50, 50] });
-    }
+    const bounds = getRidesBounds(rides);
+    if (bounds) map.fitBounds(bounds, { padding: [50, 50] });
   }, [rides, map]);
-
   return null;
 }
 
@@ -87,7 +74,7 @@ export default function Home() {
 
       {/* Map */}
       <MapContainer
-        center={[6.4474, 7.5139]} // Default center (Nigeria-ish)
+        center={[6.4474, 7.5139]}
         zoom={7}
         style={{ height: "400px", width: "100%", marginTop: "1rem" }}
       >
@@ -95,8 +82,6 @@ export default function Home() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
-
-        {/* Auto-fit bounds */}
         <FitBounds rides={filteredRides} />
 
         {filteredRides.map((ride) => {
@@ -104,8 +89,8 @@ export default function Home() {
           const destination = [ride.destination_lat, ride.destination_lng];
 
           return (
-            <>
-              {/* Origin marker */}
+            <div key={ride.id}>
+              {/* Origin */}
               {ride.origin_lat && ride.origin_lng && (
                 <Marker position={origin}>
                   <Popup>
@@ -115,8 +100,7 @@ export default function Home() {
                   </Popup>
                 </Marker>
               )}
-
-              {/* Destination marker */}
+              {/* Destination */}
               {ride.destination_lat && ride.destination_lng && (
                 <Marker position={destination}>
                   <Popup>
@@ -124,8 +108,7 @@ export default function Home() {
                   </Popup>
                 </Marker>
               )}
-
-              {/* Polyline */}
+              {/* Line */}
               {ride.origin_lat &&
                 ride.origin_lng &&
                 ride.destination_lat &&
@@ -135,7 +118,7 @@ export default function Home() {
                     pathOptions={{ color: "blue", weight: 4 }}
                   />
                 )}
-            </>
+            </div>
           );
         })}
       </MapContainer>
@@ -144,41 +127,56 @@ export default function Home() {
       <h3>Available Rides</h3>
       <div className="ride-list">
         {filteredRides.length > 0 ? (
-          filteredRides.map((ride) => (
-            <div key={ride.id} className="ride-card">
-              <h4>
-                {ride.origin} → {ride.destination}
-              </h4>
-              <p>
-                Departure:{" "}
-                {new Date(ride.departure_time).toLocaleString(undefined, {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
-                })}
-              </p>
-              <img
-                src={
-                  ride.car_type === "bus"
-                    ? "/images/busPicx.png"
-                    : "/images/carPicx.png"
-                }
-                alt={ride.car_type}
-                width={100}
-              />{" "}
-              <p>{ride.available_seats} seats available</p>
-              <br />
-              <Link to={`/rides/${ride.id}`} className="link">
-                More Ride Details --{" "}
-              </Link>
-              {/* <p>
-                {ride.car_type} | {ride.available_seats} seats
-              </p> */}
-            </div>
-          ))
+          filteredRides.map((ride) => {
+            let distance = null;
+            if (
+              ride.origin_lat &&
+              ride.origin_lng &&
+              ride.destination_lat &&
+              ride.destination_lng
+            ) {
+              distance = calculateDistance(
+                ride.origin_lat,
+                ride.origin_lng,
+                ride.destination_lat,
+                ride.destination_lng
+              );
+            }
+
+            return (
+              <div key={ride.id} className="ride-card">
+                <h4>
+                  {ride.origin} → {ride.destination}
+                </h4>
+                <p>
+                  Departure:{" "}
+                  {new Date(ride.departure_time).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </p>
+                {distance && <p>Distance: {distance.toFixed(1)} km</p>}
+                <img
+                  src={
+                    ride.car_type === "bus"
+                      ? "/images/busPicx.png"
+                      : "/images/carPicx.png"
+                  }
+                  alt={ride.car_type}
+                  width={100}
+                />
+                <p>{ride.available_seats} seats available</p>
+                <br />
+                <Link to={`/rides/${ride.id}`} className="link">
+                  More Ride Details →
+                </Link>
+              </div>
+            );
+          })
         ) : (
           <p className="loading">No rides currently available.</p>
         )}

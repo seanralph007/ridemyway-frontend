@@ -1,65 +1,58 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { validateSignup } from "../utils/validations";
+import InputField from "../components/forms/InputField";
+import SelectField from "../components/forms/SelectField";
+import ValidationError from "../components/forms/ValidationError";
+import { notifySuccess, notifyError } from "../utils/notificationService";
 import "./AuthStyles.css";
 
-export default function Signup() {
-  const { signup, login } = useContext(AuthContext);
+export default function SignUp() {
+  const { signup, login } = useAuth(); // ✅ supports auto-login
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
+    role: "",
     password: "",
     confirmPassword: "",
-    role: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
     setErrors({ ...errors, [e.target.name]: "" });
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Name is required";
-    if (!form.email.trim()) newErrors.email = "Email is required";
-    if (!form.role.trim())
-      newErrors.role = "Select a role between 'Driver' or 'Passenger'";
-    if (!form.password.trim()) newErrors.password = "Password is required";
-    if (!form.confirmPassword.trim())
-      newErrors.confirmPassword = "Confirm Password is required";
-    if (
-      form.password &&
-      form.confirmPassword &&
-      form.password !== form.confirmPassword
-    ) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
-    const validationErrors = validateForm();
+
+    const validationErrors = validateSignup(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    setLoading(true);
     try {
-      const { confirmPassword, ...userData } = form; //removed confirm password input before sending
+      setLoading(true);
+      const { confirmPassword, ...userData } = formData;
       await signup(userData);
-      await login(form.email, form.password);
+
+      await login(formData.email, formData.password);
+
+      notifySuccess("Signup successful", "Welcome aboard!");
       navigate("/");
     } catch (err) {
-      console.error("Signup/login error:", err?.response?.data || err.message);
-      alert(err?.response?.data?.message || "Signup or auto-login failed");
+      const message =
+        err?.response?.data?.message || "Signup or auto-login failed";
+      notifyError("Error", message);
     } finally {
       setLoading(false);
     }
@@ -69,52 +62,54 @@ export default function Signup() {
     <form className="signup-container" onSubmit={handleSubmit}>
       <h2>Signup</h2>
 
-      {errors.role && <p style={{ color: "red" }}>{errors.role}</p>}
-      <select
-        className="role"
+      {errors.role && <ValidationError message={errors.role} />}
+      <SelectField
         name="role"
-        value={form.role}
+        value={formData.role}
         onChange={handleChange}
-      >
-        <option value="">Select Role</option>
-        <option value="passenger">Passenger</option>
-        <option value="driver">Driver</option>
-      </select>
+        className="role"
+        options={[
+          { value: "", label: "Select Role" },
+          { value: "passenger", label: "Passenger" },
+          { value: "driver", label: "Driver" },
+        ]}
+      />
 
-      <input
+      <InputField
         name="name"
         placeholder="Name"
-        value={form.name}
+        value={formData.name}
         onChange={handleChange}
       />
-      {errors.name && <p style={{ color: "red" }}>{errors.name}</p>}
+      {errors.name && <ValidationError message={errors.name} />}
 
-      <input
+      <InputField
         name="email"
+        type="email"
         placeholder="Email"
-        value={form.email}
+        value={formData.email}
         onChange={handleChange}
       />
-      {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
+      {errors.email && <ValidationError message={errors.email} />}
 
-      <input
+      <InputField
         name="password"
         type="password"
         placeholder="Password"
-        value={form.password}
+        value={formData.password}
         onChange={handleChange}
       />
-      {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+      {errors.password && <ValidationError message={errors.password} />}
 
-      <input
+      <InputField
         name="confirmPassword"
         type="password"
         placeholder="Confirm Password"
-        value={form.confirmPassword}
+        value={formData.confirmPassword}
         onChange={handleChange}
       />
       {errors.confirmPassword && (
-        <p style={{ color: "red" }}>{errors.confirmPassword}</p>
+        <ValidationError message={errors.confirmPassword} />
       )}
 
       <button type="submit" disabled={loading}>

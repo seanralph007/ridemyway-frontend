@@ -1,75 +1,72 @@
-import { useState, useContext } from "react";
-import Swal from "sweetalert2";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
+import { validateLogin } from "../utils/validations";
+import InputField from "../components/forms/InputField";
+import ValidationError from "../components/forms/ValidationError";
+import { notifyError } from "../utils/notificationService";
 import "./AuthStyles.css";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // Usestate that declares the  Loading state
+  const [loading, setLoading] = useState(false);
 
-  // Validate the form/ make sure the name and password is provided before proceeding
-  const validateForm = () => {
-    const newErrors = {};
-    if (!email.trim()) newErrors.email = "Email is required";
-    if (!password.trim()) newErrors.password = "Password is required";
-    return newErrors;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validationErrors = validateForm();
+    const validationErrors = validateLogin(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    setLoading(true); // Start the loading
-    setErrors({}); // Clear old errors
-
     try {
-      await login(email, password);
+      setLoading(true);
+      await login(formData.email, formData.password);
       navigate("/");
     } catch (error) {
-      // Show backend error message if there is any
-      const message = err?.response?.data?.message || "Login failed";
-      alert(message);
+      const message = error?.response?.data?.message || "Login failed";
+      notifyError("Error", message);
     } finally {
-      setLoading(false); // Stop the loading
+      setLoading(false);
     }
   };
 
   return (
     <form className="login-container" onSubmit={handleSubmit}>
       <h2>Login</h2>
-      <input
-        className="input"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => {
-          setEmail(e.target.value);
-          setErrors({ ...errors, email: "" }); // Clear individual error
-        }}
-      />
-      {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
 
-      <input
+      <InputField
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
         className="input"
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-          setErrors({ ...errors, password: "" });
-        }}
       />
-      {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+      {errors.email && <ValidationError message={errors.email} />}
+
+      <InputField
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+        className="input"
+      />
+      {errors.password && <ValidationError message={errors.password} />}
 
       <button className="button" type="submit" disabled={loading}>
         {loading ? "Logging in..." : "Login"}

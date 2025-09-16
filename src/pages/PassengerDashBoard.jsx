@@ -1,73 +1,69 @@
 import { useEffect, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
-import Swal from "sweetalert2";
-import api from "../api/api";
+import {
+  getMyRequests,
+  cancelRequest,
+  deleteRequest,
+} from "../api/requestService";
+import {
+  notifySuccess,
+  notifyError,
+  confirmAction,
+} from "../utils/notificationService";
 import "./Dashboard.css";
-import React from "react";
 
 export default function PassengerDashboard() {
   const [myRequests, setMyRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const res = await api.get("/rides/my-requests");
-        setMyRequests(res.data);
-      } catch (err) {
-        console.error("Failed to fetch passenger requests:", err);
-        setError("Could not load your ride requests.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch passenger requests
+  const fetchRequests = async () => {
+    try {
+      const res = await getMyRequests();
+      setMyRequests(res);
+    } catch (err) {
+      console.error("❌ Failed to fetch passenger requests:", err);
+      setError("Could not load your ride requests.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRequests();
   }, []);
 
-  const deleteRequest = async (requestId) => {
-    const result = await Swal.fire({
-      title: "Cancel Ride Request?",
-      text: "This action cannot be undone.",
-      icon: "warning",
-      customClass: {
-        popup: "swal-popup",
-        icon: "swal-icon",
-      },
-      color: "#252525",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#292727",
-      confirmButtonText: "Yes, cancel it!",
-      cancelButtonText: "No",
-    });
+  // Cancel or Delete request
+  const handleDeleteOrCancel = async (request) => {
+    const isPending = request.status === "pending";
+
+    const result = await confirmAction(
+      isPending ? "Cancel Ride Request?" : "Delete Ride Request?",
+      isPending
+        ? "Do you really want to cancel this ride request?"
+        : "This action cannot be undone.",
+      isPending ? "Yes, cancel it!" : "Yes, delete it!"
+    );
 
     if (!result.isConfirmed) return;
 
     try {
-      await api.delete(`/ride-requests/${requestId}`);
-      Swal.fire({
-        title: "Cancelled!",
-        text: "Your ride request was successfully removed.",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-        color: "#252525",
-        customClass: {
-          popup: "swal-popup",
-          icon: "swal-icon",
-        },
-      });
+      if (isPending) {
+        await cancelRequest(request.id);
+        notifySuccess(
+          "Cancelled!",
+          "Your ride request was successfully removed."
+        );
+      } else {
+        await deleteRequest(request.id);
+        notifySuccess("Deleted!", "Your ride request was deleted.");
+      }
 
-      setMyRequests((prev) => prev.filter((r) => r.id !== requestId));
+      setMyRequests((prev) => prev.filter((r) => r.id !== request.id));
     } catch (err) {
-      console.error("Failed to delete request:", err.message);
-      Swal.fire({
-        title: "Error",
-        text: "Could not cancel the request. Please try again.",
-        icon: "error",
-      });
+      console.error("❌ Failed to cancel/delete request:", err.message);
+      notifyError("Error", "Could not process your request. Please try again.");
     }
   };
 
@@ -95,9 +91,12 @@ export default function PassengerDashboard() {
               }}
             >
               <p>
-                <strong>Destination:</strong> {req.destination} <br />
+                <strong>Destination:</strong>{" "}
+                {req.ride?.destination || req.destination} <br />
                 <strong>Departure Time:</strong>{" "}
-                {new Date(req.departure_time).toLocaleString(undefined, {
+                {new Date(
+                  req.ride?.departure_time || req.departure_time
+                ).toLocaleString(undefined, {
                   year: "numeric",
                   month: "numeric",
                   day: "numeric",
@@ -120,33 +119,17 @@ export default function PassengerDashboard() {
                 >
                   {req.status.toUpperCase()}
                 </span>
-                {/* <span
-                  style={{
-                    color:
-                      req.status === "accepted"
-                        ? "green"
-                        : req.status === "rejected"
-                        ? "red"
-                        : "orange",
-                    fontWeight: "bold"
-                  }}
-                >
-                  {req.status.toUpperCase()}
-                </span> */}
               </p>
+
               <button
                 style={{
                   border: "1px solid #ccc",
                   cursor: "pointer",
                   color: "red",
                 }}
-                onClick={() => deleteRequest(req.id)}
+                onClick={() => handleDeleteOrCancel(req)}
               >
-                {req.status === "accepted"
-                  ? "Delete"
-                  : req.status === "rejected"
-                  ? "Delete"
-                  : "Cancel Request"}
+                {req.status === "pending" ? "Cancel Request" : "Delete"}
               </button>
             </div>
           ))

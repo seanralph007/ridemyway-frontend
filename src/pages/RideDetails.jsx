@@ -1,50 +1,87 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
-import api from "../api/api";
+import { getRideById } from "../api/rideService";
+import { requestRide } from "../api/requestService";
+import {
+  notifySuccess,
+  notifyError,
+  notifyInfo,
+} from "../utils/notificationService";
+import { calculateDistance } from "../utils/mapUtils";
 import LoadingScreen from "../components/LoadingScreen";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Polyline,
+  Tooltip,
+  Popup,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import "./RideDetails.css";
-import Swal from "sweetalert2";
+
+// Fix default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 export default function RideDetails() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [ride, setRide] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch ride details
   useEffect(() => {
     const fetchRide = async () => {
       try {
-        const res = await api.get(`/rides/${id}`);
-        if (!res.data) {
-          console.log("Ride not found");
-        } else {
-          setRide(res.data);
-        }
+        const res = await getRideById(id);
+        setRide(res);
       } catch (err) {
-        console.error("Failed to fetch ride", err);
+        console.error("❌ Failed to fetch ride:", err);
+        notifyError("Error", "Ride not found.");
+        navigate("/");
+      } finally {
+        setLoading(false);
       }
     };
     fetchRide();
-  }, [id]);
+  }, [id, navigate]);
 
-  const requestJoin = async () => {
-    await api.post(`/rides/${id}/request`);
-    Swal.fire({
-      title: "Request sent!",
-      customClass: {
-        popup: "swal-popup",
-        title: "swal-title",
-      },
-      confirmButtonText: "Ok",
-      confirmButtonColor: "#292727",
-      background: "#cccccc",
-      color: "#252525",
-    });
-    // alert("Request sent");
+  // Request to join ride
+  const handleRequestRide = async () => {
+    try {
+      await requestRide(id);
+      notifySuccess("Request sent!", "Your ride request was submitted.");
+      navigate("/passenger-dashboard");
+    } catch (err) {
+      console.error("❌ Failed to request ride:", err);
+      notifyError("Error", "Could not request ride. Try again.");
+    }
   };
 
-  return ride ? (
+  if (loading) return <LoadingScreen text="Loading ride details..." />;
+  if (!ride) return <p className="error">Ride not found.</p>;
+
+  const origin = [ride.origin_lat, ride.origin_lng];
+  const destination = [ride.destination_lat, ride.destination_lng];
+  const distance = calculateDistance(
+    ride.origin_lat,
+    ride.origin_lng,
+    ride.destination_lat,
+    ride.destination_lng
+  ).toFixed(1);
+
+  return (
     <div className="container">
       <h2>Going to: {ride.destination}</h2>
       <p>
@@ -57,6 +94,9 @@ export default function RideDetails() {
       <p>
         <strong>Available Seats:</strong> {ride.available_seats}
       </p>
+      <p>
+        <strong>Trip Distance:</strong> {distance} km
+      </p>
       <img
         src={
           ride.car_type === "bus"
@@ -67,25 +107,44 @@ export default function RideDetails() {
         width={100}
       />
       <br />
+
       {user ? (
         <>
-          {user.id === ride.driver_id && (
+          {user.id === ride.driver_id ? (
             <p>You are the driver of this vehicle</p>
-          )}
-          {user.id !== ride.driver_id && (
-            <button onClick={requestJoin}>Request to Join</button>
+          ) : (
+            <button className="request-btn" onClick={handleRequestRide}>
+              Request to Join
+            </button>
           )}
         </>
       ) : (
-        <>
-          <p>Login to request for this ride</p>
-          {/* <button style={{ textDecoration: "none", color: "red" }}><Link to="/login" >Login</Link></button> */}
-        </>
+        <p>Login to request for this ride</p>
       )}
-    </div>
-  ) : (
-    <div className="loading">
-      <LoadingScreen text="Loading ride details..." />
+
+      {/* Map */}
+      <MapContainer
+        center={origin}
+        zoom={8}
+        style={{ height: "300px", width: "100%", margin: "1rem 0" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        />
+        <Marker position={origin}>
+          <Popup>{ride.origin}</Popup>
+        </Marker>
+        <Marker position={destination}>
+          <Popup>{ride.destination}</Popup>
+        </Marker>
+        <Polyline
+          positions={[origin, destination]}
+          pathOptions={{ color: "blue" }}
+        >
+          <Tooltip sticky>{`${distance} km`}</Tooltip>
+        </Polyline>
+      </MapContainer>
     </div>
   );
 }

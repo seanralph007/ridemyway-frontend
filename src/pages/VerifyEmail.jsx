@@ -24,7 +24,9 @@ export default function VerifyEmail() {
 
       try {
         // Call the backend verification
-        const res = await api.get(`/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`);
+        const res = await api.get(
+          `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
+        );
         setMessage(res.data.message || "Email verified!");
 
         await fetchUser(); // refresh user in AuthContext
@@ -34,7 +36,9 @@ export default function VerifyEmail() {
         }, 2000);
       } catch (err) {
         console.error("Verification failed:", err);
-        const msg = err?.response?.data?.message || "Something went wrong during verification.";
+        const msg =
+          err?.response?.data?.message ||
+          "Something went wrong during verification.";
         setMessage(msg);
       } finally {
         setLoading(false);
@@ -45,7 +49,7 @@ export default function VerifyEmail() {
   }, [searchParams, navigate, fetchUser]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "4rem" }}>
+    <div className="verify-container">
       <h2>Email Verification</h2>
       <p>{message}</p>
       {loading && <p>Verifying...</p>}
