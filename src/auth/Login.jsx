@@ -68,10 +68,10 @@ export default function Login() {
       />
       {errors.password && <ValidationError message={errors.password} />}
 
-        <button className="button" type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-    </div>
+      <button className="button" type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
+    </form>
+    // </div>
   );
 }
