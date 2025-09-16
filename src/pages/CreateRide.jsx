@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { createRide } from "../api/rideService";
 import { validateRide } from "../utils/validations";
-import { fetchCoordinates } from "../utils/mapUtils"; // ✅ import added
+import { fetchCoordinates } from "../utils/mapUtils";
 import "./CreateRide.css";
 
 export default function CreateRide() {

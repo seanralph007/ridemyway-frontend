@@ -29,3 +29,6 @@ export const formatCurrency = (amount, currency = "NGN") => {
     currency,
   }).format(amount);
 };
+
+// Get only year
+export const year = new Date().getFullYear();

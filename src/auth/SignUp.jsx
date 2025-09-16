@@ -9,7 +9,7 @@ import { notifySuccess, notifyError } from "../utils/notificationService";
 import "./AuthStyles.css";
 
 export default function SignUp() {
-  const { signup, login } = useAuth(); // ✅ supports auto-login
+  const { signup, login } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
