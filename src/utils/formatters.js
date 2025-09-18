@@ -1,4 +1,4 @@
-// Format full date + time (old dashboard style)
+// Format full date + time
 export const formatDateTime = (dateString) => {
   return new Date(dateString).toLocaleString(undefined, {
     year: "numeric",

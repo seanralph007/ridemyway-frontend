@@ -2,12 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getRideById } from "../api/rideService";
-import { requestRide } from "../api/requestService";
-import {
-  notifySuccess,
-  notifyError,
-  notifyInfo,
-} from "../utils/notificationService";
+import { createRequest } from "../api/requestService";
+import { notifySuccess, notifyError } from "../utils/notificationService";
 import { calculateDistance } from "../utils/mapUtils";
 import LoadingScreen from "../components/LoadingScreen";
 import {
@@ -21,6 +17,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./RideDetails.css";
+import { formatDateTime } from "../utils/formatters";
 
 // Fix default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -60,9 +57,9 @@ export default function RideDetails() {
   // Request to join ride
   const handleRequestRide = async () => {
     try {
-      await requestRide(id);
+      await createRequest(id);
       notifySuccess("Request sent!", "Your ride request was submitted.");
-      navigate("/passenger-dashboard");
+      // navigate(`/rides/${id}`);
     } catch (err) {
       console.error("❌ Failed to request ride:", err);
       notifyError("Error", "Could not request ride. Try again.");
@@ -84,12 +81,12 @@ export default function RideDetails() {
   return (
     <div className="container">
       <h2>Going to: {ride.destination}</h2>
+      <h3>From: {ride.origin}</h3>
       <p>
         <strong>Driver Name:</strong> {ride.driver_name}
       </p>
       <p>
-        <strong>Departure Time:</strong>{" "}
-        {new Date(ride.departure_time).toLocaleString("en-US")}
+        <strong>Departure Time:</strong> {formatDateTime(ride.departure_time)}
       </p>
       <p>
         <strong>Available Seats:</strong> {ride.available_seats}

@@ -84,14 +84,24 @@ export default function DriverDashboard() {
                 marginBottom: "1.5rem",
               }}
             >
-              <h3>
+              {/* <h3>
                 {ride.origin} ➜ {ride.destination}
+                <br></br>
                 <button
                   className="delete-btn"
                   onClick={() => handleDeleteRide(ride.id)}
                 >
                   Delete Ride
                 </button>
+              </h3> */}
+              <button
+                className="delete-btn"
+                onClick={() => handleDeleteRide(ride.id)}
+              >
+                Delete Ride
+              </button>
+              <h3>
+                {ride.origin} ➜ {ride.destination}
               </h3>
 
               <p>
