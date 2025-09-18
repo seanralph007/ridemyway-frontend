@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/api";
 import { formatDateTime } from "../utils/formatters";
 import {
   MapContainer,
@@ -12,6 +11,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import { getRidesBounds, calculateDistance } from "../utils/mapUtils";
+import { getRides } from "../api/rideService";
 import "./Home.css";
 
 import "leaflet/dist/leaflet.css";
@@ -27,7 +27,7 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// 🔹 Auto-fit component
+// Auto-fit component
 function FitBounds({ rides }) {
   const map = useMap();
   useEffect(() => {
@@ -47,8 +47,8 @@ export default function Home() {
 
   const fetchRides = async () => {
     try {
-      const res = await api.get("/rides");
-      setRides(res.data);
+      const res = await getRides();
+      setRides(res);
     } catch (err) {
       console.error("❌ Failed to fetch rides:", err);
     }
@@ -71,6 +71,8 @@ export default function Home() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
+      <p className="text">Scroll down to see available rides</p>
 
       {/* Map */}
       <MapContainer
@@ -148,17 +150,7 @@ export default function Home() {
                 <h4>
                   {ride.origin} → {ride.destination}
                 </h4>
-                <p>
-                  Departure: {formatDateTime(ride.departure_time)}
-                  {/* {new Date(ride.departure_time).toLocaleString(undefined, {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })} */}
-                </p>
+                <p>Departure: {formatDateTime(ride.departure_time)}</p>
                 {distance && <p>Distance: {distance.toFixed(1)} km</p>}
                 <img
                   src={

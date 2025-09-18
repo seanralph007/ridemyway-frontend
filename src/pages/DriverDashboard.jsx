@@ -7,6 +7,7 @@ import {
   notifyError,
   confirmAction,
 } from "../utils/notificationService";
+import { formatDateTime } from "../utils/formatters";
 import "./Dashboard.css";
 
 export default function DriverDashboard() {
@@ -106,7 +107,7 @@ export default function DriverDashboard() {
 
               <p>
                 <strong>Departure:</strong>{" "}
-                {new Date(ride.departure_time).toLocaleString()} <br />
+                {formatDateTime(ride.departure_time)} <br />
                 <strong>Available Seats:</strong> {ride.available_seats}
               </p>
 
