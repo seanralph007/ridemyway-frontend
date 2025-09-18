@@ -1,7 +1,7 @@
-// src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
+import { formatDateTime } from "../utils/formatters";
 import {
   MapContainer,
   TileLayer,
@@ -149,15 +149,15 @@ export default function Home() {
                   {ride.origin} → {ride.destination}
                 </h4>
                 <p>
-                  Departure:{" "}
-                  {new Date(ride.departure_time).toLocaleString(undefined, {
+                  Departure: {formatDateTime(ride.departure_time)}
+                  {/* {new Date(ride.departure_time).toLocaleString(undefined, {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
-                  })}
+                  })} */}
                 </p>
                 {distance && <p>Distance: {distance.toFixed(1)} km</p>}
                 <img
