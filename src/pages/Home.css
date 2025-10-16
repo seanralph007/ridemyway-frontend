@@ -37,8 +37,11 @@
 }
 
 .ride-card {
-  border: 1px solid #c9c9c9;
-  background: linear-gradient(90deg, #a6a6a6, #888787);
+  border: 2px solid black;
+  border-radius: 8px;
+  /* border: 1px solid #c9c9c9; */
+  /* background: linear-gradient(90deg, #a6a6a6, #888787); */
+  background: #ececec;
   padding: 1rem;
   margin: 0.5rem;
   border-radius: 8px;
@@ -46,13 +49,58 @@
   /* width: auto; */
   max-width: 400px;
   text-align: left;
+  transition: all 0.3s ease;
+}
+
+.ride-card:hover {
+  background: linear-gradient(90deg, #a6a6a6, #f0f0f0);
+  transform: scale(1.03);
+}
+
+.card {
+  display: flex;
+  gap: 1rem;
+}
+
+.txt {
+  font-weight: 550;
+}
+
+h4 {
+  font-weight: 700;
+  color: rgb(68, 68, 68);
+  font-size: larger;
+  margin: 0;
+  /* margin-top: 48px; */
 }
 
 .link {
   color: black;
   text-decoration: none;
   /* font-size: large; */
-  font-weight: 500;
+  font-weight: 550;
+}
+
+.ride-btn {
+  display: inline-block;
+  background-color: rgb(51, 48, 48);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 550;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin: 0 0;
+  width: 90%;
+}
+
+.ride-btn:hover {
+  background-color: #0f0f0f;
+}
+
+img {
+  width: 150px;
 }
 
 .text {
@@ -61,9 +109,14 @@
   font-weight: 500;
 }
 
-/* @media (max-width: 768px) {
-  html,
-  body {
-    background: #ececec;
+@media (max-width: 768px) {
+  img {
+    width: 100px;
+    height: 100px;
+    margin-top: 1.6rem;
   }
-} */
+
+  .ride-btn {
+    width: 85%;
+  }
+}

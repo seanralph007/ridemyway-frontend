@@ -147,30 +147,35 @@ export default function Home() {
 
             return (
               <div key={ride.id} className="ride-card">
-                <h4>
-                  {ride.origin} → {ride.destination}
-                </h4>
-                <p>Departure: {formatDateTime(ride.departure_time)}</p>
-                {distance && <p>Distance: {distance.toFixed(1)} km</p>}
-                <img
-                  src={
-                    ride.car_type === "bus"
-                      ? "/images/busPicx.png"
-                      : "/images/carPicx.png"
-                  }
-                  alt={ride.car_type}
-                  width={100}
-                />
-                <p>{ride.available_seats} seats available</p>
-                <br />
-                <Link to={`/rides/${ride.id}`} className="link">
-                  More Ride Details →
+                <div className="card">
+                  <div className="txt">
+                    <h4>
+                      {ride.origin} → {ride.destination}
+                    </h4>
+                    <p>Departure: {formatDateTime(ride.departure_time)}</p>
+                    {distance && <p>Distance: {distance.toFixed(1)} km</p>}
+                    <p>{ride.available_seats} seats available</p>
+                  </div>
+                  <img
+                    src={
+                      ride.car_type === "bus"
+                        ? "/images/busPicx.png"
+                        : "/images/carPicx.png"
+                    }
+                    alt={ride.car_type}
+                    // width={150}
+                  />
+                </div>
+
+                {/* <br /> */}
+                <Link to={`/rides/${ride.id}`} className="ride-btn">
+                  Request Ride →
                 </Link>
               </div>
             );
           })
         ) : (
-          <p className="loading">No rides currently available.</p>
+          <p className="txt">No rides available.</p>
         )}
       </div>
     </div>

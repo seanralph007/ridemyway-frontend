@@ -80,44 +80,46 @@ export default function RideDetails() {
 
   return (
     <div className="container">
-      <h2>Going to: {ride.destination}</h2>
-      <h3>From: {ride.origin}</h3>
-      <p>
-        <strong>Driver Name:</strong> {ride.driver_name}
-      </p>
-      <p>
-        <strong>Departure Time:</strong> {formatDateTime(ride.departure_time)}
-      </p>
-      <p>
-        <strong>Available Seats:</strong> {ride.available_seats}
-      </p>
-      <p>
-        <strong>Trip Distance:</strong> {distance} km
-      </p>
-      <img
-        src={
-          ride.car_type === "bus"
-            ? "/images/busPicx.png"
-            : "/images/carPicx.png"
-        }
-        alt={ride.car_type}
-        width={100}
-      />
-      <br />
+      <div className="text-container">
+        <h2>Going to: {ride.destination}</h2>
+        <h3>From: {ride.origin}</h3>
+        <p>
+          <strong>Driver Name:</strong> {ride.driver_name}
+        </p>
+        <p>
+          <strong>Departure Time:</strong> {formatDateTime(ride.departure_time)}
+        </p>
+        <p>
+          <strong>Available Seats:</strong> {ride.available_seats}
+        </p>
+        <p>
+          <strong>Trip Distance:</strong> {distance} km
+        </p>
+        <img
+          src={
+            ride.car_type === "bus"
+              ? "/images/busPicx.png"
+              : "/images/carPicx.png"
+          }
+          alt={ride.car_type}
+          width={100}
+        />
+        <br />
 
-      {user ? (
-        <>
-          {user.id === ride.driver_id ? (
-            <p>You are the driver of this vehicle</p>
-          ) : (
-            <button className="request-btn" onClick={handleRequestRide}>
-              Request to Join
-            </button>
-          )}
-        </>
-      ) : (
-        <p>Login to request for this ride</p>
-      )}
+        {user ? (
+          <>
+            {user.id === ride.driver_id ? (
+              <p>You are the driver of this vehicle</p>
+            ) : (
+              <button className="request-btn" onClick={handleRequestRide}>
+                Request to Join
+              </button>
+            )}
+          </>
+        ) : (
+          <p>Login to request for this ride</p>
+        )}
+      </div>
 
       {/* Map */}
       <MapContainer
