@@ -45,7 +45,7 @@ export default function VerifyEmail() {
           err?.response?.data?.message ||
           "Invalid or expired verification link.";
         // setMessage(msg);
-        notifyError("Verification Failed", msg);
+        // notifyError("Verification Failed", msg);
       } finally {
         setLoading(false);
       }
