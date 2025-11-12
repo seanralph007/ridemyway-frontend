@@ -45,10 +45,18 @@ export default function SignUp() {
       const { confirmPassword, ...userData } = formData;
       await signup(userData);
 
-      await login(formData.email, formData.password);
+      notifySuccess(
+        "Verification Link Sent!",
+        "Please check your email to verify your account before logging in."
+      );
+      navigate("/login");
 
-      notifySuccess("Signup successful", "Welcome aboard!");
-      navigate("/");
+      // await signup(userData);
+
+      // await login(formData.email, formData.password);
+
+      // notifySuccess("Signup successful", "Welcome aboard!");
+      // navigate("/");
     } catch (err) {
       const message =
         err?.response?.data?.message || "Signup or auto-login failed";

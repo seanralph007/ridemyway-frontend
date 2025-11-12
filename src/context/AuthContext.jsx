@@ -11,9 +11,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.get("/auth/me");
       setUser(res.data.user);
-      console.log("✅ User authenticated:", res.data.user);
+      console.log("User authenticated:", res.data.user);
     } catch (err) {
-      console.warn("⚠️ Failed to fetch user:", err.response?.data?.message || err.message);
+      console.warn(
+        "Failed to fetch user:",
+        err.response?.data?.message || err.message
+      );
       setUser(null);
     } finally {
       setLoading(false);
@@ -40,7 +43,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, fetchUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, signup, logout, fetchUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

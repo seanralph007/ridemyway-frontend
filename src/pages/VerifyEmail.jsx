@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/api";
 import { AuthContext } from "../context/AuthContext";
+import { notifySuccess, notifyError } from "../utils/notificationService";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -12,7 +13,6 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     const verify = async () => {
-      //Fetch the query parameters from the URL
       const token = searchParams.get("token");
       const email = searchParams.get("email");
 
@@ -23,23 +23,29 @@ export default function VerifyEmail() {
       }
 
       try {
-        // Call the backend verification
         const res = await api.get(
           `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
         );
-        setMessage(res.data.message || "Email verified!");
 
-        await fetchUser(); // refresh user in AuthContext
+        // setMessage("Email verified successfully! Redirecting...");
+        notifySuccess(
+          "Email Verified!",
+          "Redirecting you to your dashboard..."
+        );
+
+        await fetchUser();
+
         // Redirect after 2 seconds
         setTimeout(() => {
-          navigate("/"); // redirect after success
+          navigate("/");
         }, 2000);
       } catch (err) {
         console.error("Verification failed:", err);
         const msg =
           err?.response?.data?.message ||
-          "Something went wrong during verification.";
-        setMessage(msg);
+          "Invalid or expired verification link.";
+        // setMessage(msg);
+        notifyError("Verification Failed", msg);
       } finally {
         setLoading(false);
       }
@@ -47,6 +53,44 @@ export default function VerifyEmail() {
 
     verify();
   }, [searchParams, navigate, fetchUser]);
+
+  // useEffect(() => {
+  //   const verify = async () => {
+  //     //Fetch the query parameters from the URL
+  //     const token = searchParams.get("token");
+  //     const email = searchParams.get("email");
+
+  //     if (!token || !email) {
+  //       setMessage("Invalid verification link.");
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       // Call the backend verification
+  //       const res = await api.get(
+  //         `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
+  //       );
+  //       setMessage(res.data.message || "Email verified!");
+
+  //       await fetchUser(); // refresh user in AuthContext
+  //       // Redirect after 2 seconds
+  //       setTimeout(() => {
+  //         navigate("/"); // redirect after success
+  //       }, 2000);
+  //     } catch (err) {
+  //       console.error("Verification failed:", err);
+  //       const msg =
+  //         err?.response?.data?.message ||
+  //         "Something went wrong during verification.";
+  //       setMessage(msg);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   verify();
+  // }, [searchParams, navigate, fetchUser]);
 
   return (
     <div className="verify-container">
