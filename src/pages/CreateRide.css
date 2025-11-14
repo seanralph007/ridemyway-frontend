@@ -1,75 +1,75 @@
 .create-ride-container {
-    margin: 0.8% auto;
-    padding: 80px 0;
-    text-align: center;
+  margin: 0.8% auto;
+  padding: 80px 0;
+  text-align: center;
 }
 
 .carType {
-    width: 285px;
-    border-radius: 3px;
-    font-family: "Source Sans Pro", sans-serif;
-    padding: 10px 15px;
-    margin: 0.5rem auto;
-    display: block;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 300;
+  width: 285px;
+  border-radius: 3px;
+  font-family: "Source Sans Pro", sans-serif;
+  padding: 10px 15px;
+  margin: 0.5rem auto;
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 300;
 }
 
 .input {
-    border: 1px solid rgba(252, 252, 252, 0.4);
-    background-color: rgba(252, 252, 252, 0.2);
-    width: 250px;
-    border-radius: 3px;
-    font-family: "Source Sans Pro", sans-serif;
-    padding: 10px 15px;
-    margin: 0 auto 10px auto;
-    display: block;
-    text-align: center;
-    font-size: 18px;
-    /* color: rgba(15, 15, 15, 0); */
-    font-weight: 300;
+  /* border: 1px solid rgba(252, 252, 252, 0.4);
+  background-color: rgba(252, 252, 252, 0.2); */
+  border: 1px solid rgb(105, 105, 105);
+  width: 250px;
+  border-radius: 3px;
+  font-family: "Source Sans Pro", sans-serif;
+  padding: 10px 15px;
+  margin: 0 auto 10px auto;
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  /* color: rgba(15, 15, 15, 0); */
+  font-weight: 300;
 }
-  
+
 button {
-    appearance: none;
-    outline: 0;
-    background-color: rgb(51, 48, 48);
-    border: 0;
-    padding: 10px 15px;
-    color: white;
-    border-radius: 3px;
-    width: 250px;
-    font-size: 18px;
+  appearance: none;
+  outline: 0;
+  background-color: rgb(51, 48, 48);
+  border: 0;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 3px;
+  width: 250px;
+  font-size: 18px;
 }
 
 .my-swal-popup {
-    width: 25rem;
+  width: 25rem;
 }
 
 .my-swal-title {
-    color: #000000;
+  color: #000000;
 }
 
 .my-swal-icon {
-    width: 80px !important;   
-    height: 80px !important;
+  width: 80px !important;
+  height: 80px !important;
 }
 
 .my-swal-icon .swal2-success-ring {
-    border: 3px solid #0cb333 !important; 
+  border: 3px solid #0cb333 !important;
 }
-  
-  /* tick inside the circle */
-  .my-swal-icon .swal2-success-line-tip,
-  .my-swal-icon .swal2-success-line-long {
-    background-color: #28a745 !important; 
+
+/* tick inside the circle */
+.my-swal-icon .swal2-success-line-tip,
+.my-swal-icon .swal2-success-line-long {
+  background-color: #28a745 !important;
 }
-    
 
 @media (max-width: 768px) {
-    .my-swal-popup {
-        width: auto;
-        height: 21rem;
-    }
+  .my-swal-popup {
+    width: auto;
+    height: 21rem;
+  }
 }

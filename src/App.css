@@ -5,8 +5,8 @@
 
 html,
 body {
-  background: linear-gradient(90deg, #a6a6a6, #888787);
-  /* background: #ececec; */
+  /* background: linear-gradient(90deg, #a6a6a6, #888787); */
+  background: #ececec;
   height: "100vh";
   margin: 0;
   padding: 0;

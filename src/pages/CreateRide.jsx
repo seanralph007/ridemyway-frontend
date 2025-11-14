@@ -16,7 +16,7 @@ export default function CreateRide() {
     destination_lng: null,
     departure_time: "",
     car_type: "",
-    available_seats: 0,
+    available_seats: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -67,7 +67,6 @@ export default function CreateRide() {
   return (
     <form className="create-ride-container" onSubmit={handleSubmit}>
       <h2>Create Ride</h2>
-
       <select
         className="carType"
         name="car_type"
@@ -111,6 +110,7 @@ export default function CreateRide() {
       )}
 
       <input
+        className="input"
         name="available_seats"
         type="number"
         value={ride.available_seats}
