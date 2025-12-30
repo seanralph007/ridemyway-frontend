@@ -9,24 +9,11 @@
   max-width: 400px;
   padding: 0.5rem;
   margin-top: -0.5rem;
-  /* margin: 0.5rem auto; */
+  margin: 0.5rem auto;
   display: block;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
-
-/* .ride-list {
-  margin-top: 1rem;
-}
-
-.ride-card {
-  background: linear-gradient(90deg, #a6a6a6, #888787);
-  padding: 1rem;
-  margin: 0.5rem auto;
-  border-radius: 8px;
-  max-width: 400px;
-  text-align: left;
-} */
 
 .ride-list {
   display: flex;
@@ -39,14 +26,11 @@
 .ride-card {
   border: 2px solid black;
   border-radius: 8px;
-  /* border: 1px solid #c9c9c9; */
-  /* background: linear-gradient(90deg, #a6a6a6, #888787); */
   background: #ececec;
   padding: 1rem;
   margin: 0.5rem;
   border-radius: 8px;
   height: auto;
-  /* width: auto; */
   max-width: 400px;
   text-align: left;
   transition: all 0.3s ease;
@@ -71,7 +55,6 @@ h4 {
   color: rgb(68, 68, 68);
   font-size: larger;
   margin: 0;
-  /* margin-top: 48px; */
 }
 
 .link {
@@ -120,3 +103,16 @@ img {
     width: 85%;
   }
 }
+
+/* .ride-list {
+  margin-top: 1rem;
+}
+
+.ride-card {
+  background: linear-gradient(90deg, #a6a6a6, #888787);
+  padding: 1rem;
+  margin: 0.5rem auto;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: left;
+} */
