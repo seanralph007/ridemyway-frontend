@@ -13,6 +13,7 @@
   display: block;
   border-radius: 6px;
   border: 1px solid #ccc;
+  text-align: center;
 }
 
 .ride-list {
@@ -60,7 +61,6 @@ h4 {
 .link {
   color: black;
   text-decoration: none;
-  /* font-size: large; */
   font-weight: 550;
 }
 

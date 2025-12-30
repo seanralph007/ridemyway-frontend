@@ -67,7 +67,7 @@ export default function Home() {
       <input
         type="text"
         className="search-bar"
-        placeholder="Where to go?"
+        placeholder="Where is your destination?"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
