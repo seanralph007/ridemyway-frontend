@@ -75,26 +75,7 @@ export default function DriverDashboard() {
           <p>You haven't offered any rides yet.</p>
         ) : (
           rides.map((ride) => (
-            <div
-              key={ride.id}
-              className="req-box"
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "1rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              {/* <h3>
-                {ride.origin} ➜ {ride.destination}
-                <br></br>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteRide(ride.id)}
-                >
-                  Delete Ride
-                </button>
-              </h3> */}
+            <div className="req-box" key={ride.id}>
               <button
                 className="delete-btn"
                 onClick={() => handleDeleteRide(ride.id)}
@@ -116,15 +97,7 @@ export default function DriverDashboard() {
                 <p>No requests for this ride yet.</p>
               ) : (
                 ride.requests.map((req) => (
-                  <div
-                    key={req.id}
-                    className="req-details"
-                    style={{
-                      padding: "0.75rem",
-                      borderRadius: "6px",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
+                  <div key={req.id} className="req-details">
                     <p>
                       <strong>Passenger:</strong> {req.passenger_name} <br />
                       <strong>Status:</strong> {req.status}
@@ -132,6 +105,7 @@ export default function DriverDashboard() {
                     {req.status === "pending" && (
                       <div className="button-container">
                         <button
+                          className="accept-btn"
                           onClick={() =>
                             handleRequestAction(req.id, "accepted")
                           }
@@ -139,10 +113,10 @@ export default function DriverDashboard() {
                           Accept
                         </button>
                         <button
+                          className="reject-btn"
                           onClick={() =>
                             handleRequestAction(req.id, "rejected")
                           }
-                          style={{ color: "red" }}
                         >
                           Reject
                         </button>

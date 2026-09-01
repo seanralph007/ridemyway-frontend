@@ -1,62 +1,117 @@
-.login-container {
-  margin: 5% auto;
-  padding: 60px 0;
+.login-container,
+.signup-container {
+  margin: 2.5rem auto;
+  padding: 40px 24px;
   text-align: center;
+  width: 92%;
+  max-width: 440px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .signup-container {
-  margin: 2% auto;
-  padding: 60px 0;
-  text-align: center;
+  margin: 1.5rem auto;
+}
+
+.login-container h2,
+.signup-container h2 {
+  color: var(--header-color);
+  margin-bottom: 1.5rem;
 }
 
 .role {
-  width: 284px;
-  border-radius: 3px;
-  font-family: "Source Sans Pro", sans-serif;
-  padding: 10px 15px;
+  width: 100%;
+  max-width: 320px;
+  border-radius: 6px;
+  font-family: inherit;
+  padding: 11px 15px;
   margin: 10px auto;
   display: block;
   text-align: center;
-  font-size: 18px;
-  font-weight: 300;
+  font-size: 16px;
+  border: 1px solid var(--search-border);
+  background-color: var(--search-bg);
+  color: var(--search-text);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
-/* input {
-  border: 1px solid rgba(252, 252, 252, 0.4);
-  background-color: rgba(252, 252, 252, 0.2);
-  width: 250px;
-  border-radius: 3px;
-  font-family: "Source Sans Pro", sans-serif;
-  padding: 10px 15px;
-  margin: 0 auto 10px auto;
-  display: block;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 300;
-} */
-
 .input {
-  border: 1px solid rgb(105, 105, 105);
-  width: 250px;
-  border-radius: 3px;
-  font-family: "Source Sans Pro", sans-serif;
-  padding: 10px 15px;
+  border: 1px solid var(--search-border);
+  width: 100%;
+  max-width: 320px;
+  border-radius: 6px;
+  font-family: inherit;
+  padding: 11px 15px;
   margin: 0 auto 10px auto;
   display: block;
   text-align: center;
-  font-size: 18px;
-  font-weight: 300;
+  font-size: 16px;
+  background-color: var(--search-bg);
+  color: var(--search-text);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.role:focus,
+.input:focus {
+  outline: none;
+  border-color: var(--btn-bg);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 button {
   appearance: none;
   outline: 0;
-  background-color: rgb(51, 48, 48);
+  background-color: var(--btn-bg);
   border: 0;
-  padding: 10px 15px;
-  color: white;
-  border-radius: 3px;
-  width: 250px;
-  font-size: 18px;
+  padding: 12px 15px;
+  color: var(--btn-text);
+  border-radius: 6px;
+  width: 100%;
+  max-width: 320px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background-color: var(--btn-hover);
+  box-shadow: var(--shadow-md);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .login-container,
+  .signup-container {
+    margin: 1.5rem auto;
+    padding: 28px 16px;
+    width: 92%;
+  }
+
+  .role,
+  .input,
+  button {
+    max-width: 100%;
+  }
 }

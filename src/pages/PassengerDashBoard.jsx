@@ -79,17 +79,7 @@ export default function PassengerDashboard() {
           <p>You have not requested any rides yet.</p>
         ) : (
           myRequests.map((req) => (
-            <div
-              className="request"
-              key={req.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "1rem",
-                marginBottom: "1rem",
-                background: "#cccccc",
-              }}
-            >
+            <div className="request" key={req.id}>
               <p>
                 <strong>Destination:</strong>{" "}
                 {req.ride?.destination || req.destination} <br />
@@ -110,10 +100,10 @@ export default function PassengerDashboard() {
                   style={{
                     color:
                       req.status === "accepted"
-                        ? "green"
+                        ? "#10b981"
                         : req.status === "rejected"
-                        ? "red"
-                        : "orange",
+                        ? "#ef4444"
+                        : "#f59e0b",
                     fontWeight: "bold",
                   }}
                 >
@@ -122,11 +112,7 @@ export default function PassengerDashboard() {
               </p>
 
               <button
-                style={{
-                  border: "1px solid #ccc",
-                  cursor: "pointer",
-                  color: "red",
-                }}
+                className="danger-btn"
                 onClick={() => handleDeleteOrCancel(req)}
               >
                 {req.status === "pending" ? "Cancel Request" : "Delete"}

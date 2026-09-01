@@ -12,6 +12,7 @@ import {
 import L from "leaflet";
 import { getRidesBounds, calculateDistance } from "../utils/mapUtils";
 import { getRides } from "../api/rideService";
+import { useTheme } from "../context/ThemeContext";
 import "./Home.css";
 
 import "leaflet/dist/leaflet.css";
@@ -40,6 +41,7 @@ function FitBounds({ rides }) {
 export default function Home() {
   const [rides, setRides] = useState([]);
   const [search, setSearch] = useState("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     fetchRides();
@@ -81,8 +83,16 @@ export default function Home() {
         style={{ height: "400px", width: "100%", marginTop: "1rem" }}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url={
+            theme === "dark"
+              ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+              : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          }
+          attribution={
+            theme === "dark"
+              ? "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
         />
         <FitBounds rides={filteredRides} />
 

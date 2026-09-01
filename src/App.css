@@ -1,21 +1,20 @@
-/* body {
-  background: linear-gradient(90deg, #a6a6a6, #888787);
-  height: "100vh";
-} */
-
 html,
-body {
-  /* background: linear-gradient(90deg, #a6a6a6, #888787); */
-  background: #ececec;
-  height: "100vh";
+body,
+#root {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
   overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
   body {
-    /* background: #ececec; */
     overflow-x: hidden;
     width: 100%;
   }

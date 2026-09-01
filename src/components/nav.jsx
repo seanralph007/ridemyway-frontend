@@ -1,6 +1,7 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 import "./nav.css";
 
 export default function Navbar() {
@@ -24,107 +25,159 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Close sidebar on Escape key or on window resize
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    const handleResize = () => {
+      if (window.innerWidth > 768) setMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // Get first letter of name
   const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
 
   return (
-    <nav className="navbar">
-      <div className="navbar-brand">
-        <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          RideMyWay
-        </Link>
-        <button className="navbar-toggle" onClick={toggleMenu}>
-          ☰
-        </button>
-      </div>
+    <>
+      <nav className="navbar">
+        <div className="navbar-brand">
+          <Link to="/" className="navbar-logo" onClick={closeMenu}>
+            RideMyWay
+          </Link>
+          <button
+            className="navbar-toggle"
+            onClick={toggleMenu}
+            aria-label="Open navigation menu"
+          >
+            ☰
+          </button>
+        </div>
 
-      {/* Desktop Navigation */}
-      <div className="navbar-links">
-        {user && <Link to="/">Home</Link>}
+        {/* Desktop Navigation */}
+        <div className="navbar-links">
+          {user && <Link to="/">Home</Link>}
 
-        {user?.role === "driver" && <Link to="/create">Offer Ride</Link>}
+          {user?.role === "driver" && <Link to="/create">Offer Ride</Link>}
 
-        {!user && (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/signup">Signup</Link>
-          </>
-        )}
+          {!user && (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Signup</Link>
+            </>
+          )}
 
-        {/* User avatar dropdown */}
-        {user && (
-          <div className="user-dropdown" ref={dropdownRef}>
-            <div className="user-avatar" onClick={toggleDropdown}>
-              {user.photo ? (
-                <img src={user.photo} alt="avatar" />
-              ) : (
-                <span>{getInitial(user.name)}</span>
+          <ThemeToggle />
+
+          {/* User avatar dropdown */}
+          {user && (
+            <div className="user-dropdown" ref={dropdownRef}>
+              <div className="user-avatar" onClick={toggleDropdown}>
+                {user.photo ? (
+                  <img src={user.photo} alt="avatar" />
+                ) : (
+                  <span>{getInitial(user.name)}</span>
+                )}
+              </div>
+
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  <Link
+                    to={user.role === "driver" ? "/driver" : "/passenger"}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setDropdownOpen(false);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
               )}
             </div>
+          )}
+        </div>
+      </nav>
 
-            {dropdownOpen && (
-              <div className="dropdown-menu">
-                <Link
-                  to={user.role === "driver" ? "/driver" : "/passenger"}
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    setDropdownOpen(false);
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      {/* Mobile Backdrop Overlay - closes sidebar when tapping outside */}
+      {menuOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={closeMenu}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Mobile Sidebar */}
-      <div className={`sidebar ${menuOpen ? "open" : ""}`}>
-        <button className="close-btn" onClick={closeMenu}>
-          ☰
-        </button>
-        <Link to="/" onClick={closeMenu}>
-          Home
-        </Link>
-        {user?.role === "driver" && (
-          <Link to="/create" onClick={closeMenu}>
-            Offer Ride
-          </Link>
-        )}
-        {user && (
-          <Link
-            to={user.role === "driver" ? "/driver" : "/passenger"}
-            onClick={closeMenu}
-          >
-            Profile
-          </Link>
-        )}
-        {user ? (
+      <aside
+        className={`sidebar ${menuOpen ? "open" : ""}`}
+        aria-label="Mobile navigation"
+      >
+        <div className="sidebar-header">
+          <span className="sidebar-brand">Menu</span>
           <button
-            onClick={() => {
-              logout();
-              closeMenu();
-            }}
+            className="close-btn"
+            onClick={closeMenu}
+            aria-label="Close navigation menu"
           >
-            Logout
+            ✕
           </button>
-        ) : (
-          <>
-            <Link to="/login" onClick={closeMenu}>
-              Login
+        </div>
+
+        <div className="mobile-toggle-container">
+          <span className="toggle-label">Theme</span>
+          <ThemeToggle />
+        </div>
+
+        <div className="sidebar-links">
+          <Link to="/" onClick={closeMenu}>
+            Home
+          </Link>
+          {user?.role === "driver" && (
+            <Link to="/create" onClick={closeMenu}>
+              Offer Ride
             </Link>
-            <Link to="/signup" onClick={closeMenu}>
-              Signup
+          )}
+          {user && (
+            <Link
+              to={user.role === "driver" ? "/driver" : "/passenger"}
+              onClick={closeMenu}
+            >
+              Profile
             </Link>
-          </>
-        )}
-      </div>
-    </nav>
+          )}
+          {user ? (
+            <button
+              className="sidebar-logout-btn"
+              onClick={() => {
+                logout();
+                closeMenu();
+              }}
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" onClick={closeMenu}>
+                Login
+              </Link>
+              <Link to="/signup" onClick={closeMenu}>
+                Signup
+              </Link>
+            </>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }

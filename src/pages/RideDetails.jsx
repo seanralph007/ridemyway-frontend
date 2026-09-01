@@ -6,6 +6,7 @@ import { createRequest } from "../api/requestService";
 import { notifySuccess, notifyError } from "../utils/notificationService";
 import { calculateDistance } from "../utils/mapUtils";
 import LoadingScreen from "../components/LoadingScreen";
+import { useTheme } from "../context/ThemeContext";
 import {
   MapContainer,
   TileLayer,
@@ -33,6 +34,7 @@ L.Icon.Default.mergeOptions({
 export default function RideDetails() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [ride, setRide] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -128,8 +130,16 @@ export default function RideDetails() {
         style={{ height: "300px", width: "100%", margin: "1rem 0" }}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url={
+            theme === "dark"
+              ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+              : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          }
+          attribution={
+            theme === "dark"
+              ? "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
         />
         <Marker position={origin}>
           <Popup>{ride.origin}</Popup>

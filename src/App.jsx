@@ -12,7 +12,7 @@ import DriverDashboard from "./pages/DriverDashboard";
 import PassengerDashboard from "./pages/PassengerDashBoard";
 import VerifyEmail from "./pages/VerifyEmail";
 import LoadingScreen from "./components/LoadingScreen";
-// import Footer from "./components/Footer/Footer";
+import { ThemeProvider } from "./context/ThemeContext";
 import "./App.css";
 
 function AppRoutes() {
@@ -60,11 +60,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
